@@ -61,6 +61,7 @@ public class Book {
 
     // Relationships
 
+    @Builder.Default
     @OneToMany(mappedBy = "book")
     private Set<LoanLine> loanLines = new HashSet<>();
 
