@@ -1,18 +1,21 @@
 package enriquevb.biblioteca.services;
 
+import enriquevb.biblioteca.entities.Author;
+import enriquevb.biblioteca.entities.Member;
 import enriquevb.biblioteca.mappers.MemberMapper;
 import enriquevb.biblioteca.models.MemberDTO;
 import enriquevb.biblioteca.repositories.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -22,6 +25,9 @@ public class MemberServiceJPA implements MemberService {
     private final MemberRepository memberRepository;
     private final MemberMapper memberMapper;
 
+    private static final int DEFAULT_PAGE = 0;
+    private static final int DEFAULT_PAGE_SIZE = 25;
+
     @Override
     public Optional<MemberDTO> getMemberById(UUID uuid) {
         return Optional.ofNullable(memberMapper
@@ -29,10 +35,61 @@ public class MemberServiceJPA implements MemberService {
     }
 
     @Override
-    public List<MemberDTO> getAllMembers() {
-        return memberRepository.findAll().stream()
-                .map(memberMapper::memberToMemberDto)
-                .collect(Collectors.toList());
+    public Page<MemberDTO> listMembers(String name, String email, Integer pageNumber, Integer pageSize) {
+        PageRequest pageRequest = buildPageRequest(pageNumber, pageSize);
+
+        Page<Member> memberPage;
+
+        if (StringUtils.hasText(name) && !StringUtils.hasText(email)) {
+            memberPage = listMembersByName(name, pageRequest);
+        } else if (!StringUtils.hasText(name) && StringUtils.hasText(email)) {
+            memberPage = listMembersByEmail(email, pageRequest);
+        } else if (StringUtils.hasText(name) && StringUtils.hasText(email)) {
+            memberPage = listMembersByNameAndEmail(name, email, pageRequest);
+        } else {
+            memberPage = memberRepository.findAll(pageRequest);
+        }
+
+        return memberPage.map(memberMapper::memberToMemberDto);
+    }
+
+    private Page<Member> listMembersByNameAndEmail(String name, String email, PageRequest pageRequest) {
+        return memberRepository.findAllByNameIsLikeIgnoreCaseAndEmail(name,email,pageRequest);
+    }
+
+    private Page<Member> listMembersByEmail(String email, PageRequest pageRequest) {
+        return memberRepository.findAllByEmail(email, pageRequest);
+    }
+
+    private Page<Member> listMembersByName(String name, PageRequest pageRequest) {
+        return memberRepository.findAllByNameIsLikeIgnoreCase("%" + name + "%",pageRequest);
+    }
+
+    private PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
+        int queryPageNumber;
+        int queryPageSize;
+
+        if (pageNumber != null && pageNumber > 0) {
+            queryPageNumber = pageNumber - 1;
+        } else {
+            queryPageNumber = DEFAULT_PAGE;
+        }
+
+        if (pageSize == null) {
+            queryPageSize = DEFAULT_PAGE_SIZE;
+        } else {
+            if (pageSize > 1000) {
+                queryPageSize = 1000;
+            } else {
+                queryPageSize = pageSize;
+            }
+        }
+
+        Sort sort = Sort.by(Sort.Order.asc("name"));
+
+        return PageRequest.of(queryPageNumber, queryPageSize, sort);
+
+
     }
 
     @Override

@@ -57,7 +57,7 @@ class MemberControllerTest {
 
     @Test
     void testPatchMember() throws Exception {
-        MemberDTO memberDTO = memberServiceImpl.getAllMembers().get(0);
+        MemberDTO memberDTO = memberServiceImpl.listMembers(null, null, 1, 25).getContent().get(0);
 
         Map<String, Object> memberMap = new HashMap<>();
         memberMap.put("name", "New Member Name");
@@ -76,7 +76,7 @@ class MemberControllerTest {
 
     @Test
     void testDeleteMember() throws Exception {
-        MemberDTO memberDTO = memberServiceImpl.getAllMembers().get(0);
+        MemberDTO memberDTO = memberServiceImpl.listMembers(null, null, 1, 25).getContent().get(0);
 
         given(memberService.deleteMemberById(any(UUID.class))).willReturn(true);
 
@@ -100,7 +100,7 @@ class MemberControllerTest {
 
     @Test
     void testUpdateMember() throws Exception {
-        MemberDTO memberDTO = memberServiceImpl.getAllMembers().get(0);
+        MemberDTO memberDTO = memberServiceImpl.listMembers(null, null, 1, 25).getContent().get(0);
 
         given(memberService.updateMemberById(any(), any())).willReturn(Optional.of(memberDTO));
 
@@ -115,7 +115,7 @@ class MemberControllerTest {
 
     @Test
     void testUpdateMemberNotFound() throws Exception {
-        MemberDTO memberDTO = memberServiceImpl.getAllMembers().get(0);
+        MemberDTO memberDTO = memberServiceImpl.listMembers(null, null, 1, 25).getContent().get(0);
 
         given(memberService.updateMemberById(any(), any())).willReturn(Optional.empty());
 
@@ -128,9 +128,9 @@ class MemberControllerTest {
 
     @Test
     void testCreateNewMember() throws Exception {
-        MemberDTO memberDTO = memberServiceImpl.getAllMembers().get(0);
+        MemberDTO memberDTO = memberServiceImpl.listMembers(null, null, 1, 25).getContent().get(0);
 
-        given(memberService.saveNewMember(any(MemberDTO.class))).willReturn(memberServiceImpl.getAllMembers().get(1));
+        given(memberService.saveNewMember(any(MemberDTO.class))).willReturn(memberServiceImpl.listMembers(null, null, 1, 25).getContent().get(1));
 
         mockMvc.perform(post(MemberController.MEMBER_PATH)
                         .accept(MediaType.APPLICATION_JSON)
@@ -143,13 +143,13 @@ class MemberControllerTest {
     @Test
     void testListAllMembers() throws Exception {
 
-        given(memberService.getAllMembers()).willReturn(memberServiceImpl.getAllMembers());
+        given(memberService.listMembers(any(), any(), any(), any())).willReturn(memberServiceImpl.listMembers(null, null, 1, 25));
 
         mockMvc.perform(get(MemberController.MEMBER_PATH)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()", is(3)));
+                .andExpect(jsonPath("$.content.length()", is(3)));
     }
 
     @Test
@@ -164,7 +164,7 @@ class MemberControllerTest {
 
     @Test
     void getMemberById() throws Exception {
-        MemberDTO member = memberServiceImpl.getAllMembers().get(0);
+        MemberDTO member = memberServiceImpl.listMembers(null, null, 1, 25).getContent().get(0);
 
         given(memberService.getMemberById(member.getId())).willReturn(Optional.of(member));
 

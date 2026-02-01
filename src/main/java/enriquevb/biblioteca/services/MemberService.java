@@ -1,16 +1,16 @@
 package enriquevb.biblioteca.services;
 
 import enriquevb.biblioteca.models.MemberDTO;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface MemberService {
 
-    Optional<MemberDTO> getMemberById(UUID uuid);
+    Page<MemberDTO> listMembers(String name, String email, Integer pageNumber, Integer pageSize);
 
-    List<MemberDTO> getAllMembers();
+    Optional<MemberDTO> getMemberById(UUID uuid);
 
     MemberDTO saveNewMember(MemberDTO member);
 

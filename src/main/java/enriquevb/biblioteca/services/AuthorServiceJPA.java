@@ -40,11 +40,11 @@ public class AuthorServiceJPA implements AuthorService {
         Page<Author> authorPage;
 
         if (StringUtils.hasText(fullName) && !StringUtils.hasText(nationality)) {
-            authorPage = listAuthorsByTitle(fullName, pageRequest);
+            authorPage = listAuthorsByName(fullName, pageRequest);
         } else if (!StringUtils.hasText(fullName) && StringUtils.hasText(nationality)) {
             authorPage = listAuthorByNationality(nationality, pageRequest);
         } else if (StringUtils.hasText(fullName) && StringUtils.hasText(nationality)) {
-            authorPage = listBooksByNameAndIsbn(fullName, nationality, pageRequest);
+            authorPage = listAuthorsByNameAndNationality(fullName, nationality, pageRequest);
         } else {
             authorPage = authorRepository.findAll(pageRequest);
         }
@@ -52,7 +52,7 @@ public class AuthorServiceJPA implements AuthorService {
         return authorPage.map(authorMapper::authorToAuthorDto);
     }
 
-    private Page<Author> listBooksByNameAndIsbn(String fullName, String nationality, PageRequest pageRequest) {
+    private Page<Author> listAuthorsByNameAndNationality(String fullName, String nationality, PageRequest pageRequest) {
         return authorRepository.findAllByFullNameIsLikeIgnoreCaseAndNationality("%"+fullName+"%",nationality,pageRequest);
     }
 
@@ -60,7 +60,7 @@ public class AuthorServiceJPA implements AuthorService {
         return authorRepository.findAllByNationality(nationality, pageRequest);
     }
 
-    private Page<Author> listAuthorsByTitle(String fullName, PageRequest pageRequest) {
+    private Page<Author> listAuthorsByName(String fullName, PageRequest pageRequest) {
         return authorRepository.findAllByFullNameIsLikeIgnoreCase("%"+fullName+"%", pageRequest);
     }
 

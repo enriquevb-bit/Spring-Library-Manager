@@ -3,12 +3,12 @@ package enriquevb.biblioteca.controllers;
 import enriquevb.biblioteca.models.MemberDTO;
 import enriquevb.biblioteca.services.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -61,8 +61,11 @@ public class MemberController {
     }
 
     @GetMapping(MEMBER_PATH)
-    public List<MemberDTO> listAllMembers() {
-        return memberService.getAllMembers();
+    public Page<MemberDTO> listMembers(@RequestParam(required = false) String name,
+                                          @RequestParam(required = false) String email,
+                                          @RequestParam(required = false) Integer pageNumber,
+                                          @RequestParam(required = false) Integer pageSize) {
+        return memberService.listMembers(name, email, pageNumber, pageSize);
     }
 
     @GetMapping(value = MEMBER_PATH_ID)
