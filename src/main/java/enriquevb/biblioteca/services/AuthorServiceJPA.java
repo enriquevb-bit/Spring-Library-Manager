@@ -1,18 +1,20 @@
 package enriquevb.biblioteca.services;
 
+import enriquevb.biblioteca.entities.Author;
 import enriquevb.biblioteca.mappers.AuthorMapper;
 import enriquevb.biblioteca.models.AuthorDTO;
 import enriquevb.biblioteca.repositories.AuthorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -22,6 +24,9 @@ public class AuthorServiceJPA implements AuthorService {
     private final AuthorRepository authorRepository;
     private final AuthorMapper authorMapper;
 
+    private static final int DEFAULT_PAGE = 0;
+    private static final int DEFAULT_PAGE_SIZE = 25;
+
     @Override
     public Optional<AuthorDTO> getAuthorById(UUID uuid) {
         return Optional.ofNullable(authorMapper
@@ -29,10 +34,60 @@ public class AuthorServiceJPA implements AuthorService {
     }
 
     @Override
-    public List<AuthorDTO> getAllAuthors() {
-        return authorRepository.findAll().stream()
-                .map(authorMapper::authorToAuthorDto)
-                .collect(Collectors.toList());
+    public Page<AuthorDTO> listAuthors(String fullName, String nationality, Integer pageNumber, Integer pageSize) {
+        PageRequest pageRequest = buildPageRequest(pageNumber, pageSize);
+
+        Page<Author> authorPage;
+
+        if (StringUtils.hasText(fullName) && !StringUtils.hasText(nationality)) {
+            authorPage = listAuthorsByTitle(fullName, pageRequest);
+        } else if (!StringUtils.hasText(fullName) && StringUtils.hasText(nationality)) {
+            authorPage = listAuthorByNationality(nationality, pageRequest);
+        } else if (StringUtils.hasText(fullName) && StringUtils.hasText(nationality)) {
+            authorPage = listBooksByNameAndIsbn(fullName, nationality, pageRequest);
+        } else {
+            authorPage = authorRepository.findAll(pageRequest);
+        }
+
+        return authorPage.map(authorMapper::authorToAuthorDto);
+    }
+
+    private Page<Author> listBooksByNameAndIsbn(String fullName, String nationality, PageRequest pageRequest) {
+        return authorRepository.findAllByFullNameIsLikeIgnoreCaseAndNationality("%"+fullName+"%",nationality,pageRequest);
+    }
+
+    private Page<Author> listAuthorByNationality(String nationality, PageRequest pageRequest) {
+        return authorRepository.findAllByNationality(nationality, pageRequest);
+    }
+
+    private Page<Author> listAuthorsByTitle(String fullName, PageRequest pageRequest) {
+        return authorRepository.findAllByFullNameIsLikeIgnoreCase("%"+fullName+"%", pageRequest);
+    }
+
+    private PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
+        int queryPageNumber;
+        int queryPageSize;
+
+        if (pageNumber != null && pageNumber > 0) {
+            queryPageNumber = pageNumber - 1;
+        } else {
+            queryPageNumber = DEFAULT_PAGE;
+        }
+
+        if (pageSize == null) {
+            queryPageSize = DEFAULT_PAGE_SIZE;
+        } else {
+            if (pageSize > 1000) {
+                queryPageSize = 1000;
+            } else {
+                queryPageSize = pageSize;
+            }
+        }
+
+        Sort sort = Sort.by(Sort.Order.asc("fullName"));
+
+        return PageRequest.of(queryPageNumber, queryPageSize, sort);
+
     }
 
     @Override

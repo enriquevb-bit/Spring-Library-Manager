@@ -1,8 +1,8 @@
 package enriquevb.biblioteca.services;
 
 import enriquevb.biblioteca.models.AuthorDTO;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -10,7 +10,7 @@ public interface AuthorService {
 
     Optional<AuthorDTO> getAuthorById(UUID uuid);
 
-    List<AuthorDTO> getAllAuthors();
+    Page<AuthorDTO> listAuthors(String fullName, String nationality, Integer pageNumber, Integer pageSize);
 
     AuthorDTO saveNewAuthor(AuthorDTO author);
 

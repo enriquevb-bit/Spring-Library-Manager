@@ -3,6 +3,7 @@ package enriquevb.biblioteca.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -36,6 +37,7 @@ public class Author {
 
     @NotNull
     @NotBlank
+    @Size(max = 50)
     private String fullName;
 
     private String nationality;

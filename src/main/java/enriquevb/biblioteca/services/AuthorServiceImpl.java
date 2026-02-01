@@ -1,6 +1,8 @@
 package enriquevb.biblioteca.services;
 
 import enriquevb.biblioteca.models.AuthorDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -50,8 +52,8 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public List<AuthorDTO> getAllAuthors() {
-        return new ArrayList<>(authorMap.values());
+    public Page<AuthorDTO> listAuthors(String fullName, String nationality, Integer pageNumber, Integer pageSize) {
+        return new PageImpl<>(new ArrayList<>(authorMap.values()));
     }
 
     @Override

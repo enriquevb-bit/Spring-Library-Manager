@@ -57,7 +57,7 @@ class AuthorControllerTest {
 
     @Test
     void testPatchAuthor() throws Exception {
-        AuthorDTO authorDTO = authorServiceImpl.getAllAuthors().get(0);
+        AuthorDTO authorDTO = authorServiceImpl.listAuthors(null, null, 1, 50).getContent().get(0);
 
         Map<String, Object> authorMap = new HashMap<>();
         authorMap.put("fullName", "New Author Name");
@@ -76,7 +76,7 @@ class AuthorControllerTest {
 
     @Test
     void testDeleteAuthor() throws Exception {
-        AuthorDTO authorDTO = authorServiceImpl.getAllAuthors().get(0);
+        AuthorDTO authorDTO = authorServiceImpl.listAuthors(null, null, 1, 50).getContent().get(0);
 
         given(authorService.deleteAuthorById(any(UUID.class))).willReturn(true);
 
@@ -100,7 +100,7 @@ class AuthorControllerTest {
 
     @Test
     void testUpdateAuthor() throws Exception {
-        AuthorDTO authorDTO = authorServiceImpl.getAllAuthors().get(0);
+        AuthorDTO authorDTO = authorServiceImpl.listAuthors(null, null, 1, 50).getContent().get(0);
 
         given(authorService.updateAuthorById(any(), any())).willReturn(Optional.of(authorDTO));
 
@@ -115,7 +115,7 @@ class AuthorControllerTest {
 
     @Test
     void testUpdateAuthorNotFound() throws Exception {
-        AuthorDTO authorDTO = authorServiceImpl.getAllAuthors().get(0);
+        AuthorDTO authorDTO = authorServiceImpl.listAuthors(null, null, 1, 50).getContent().get(0);
 
         given(authorService.updateAuthorById(any(), any())).willReturn(Optional.empty());
 
@@ -128,9 +128,9 @@ class AuthorControllerTest {
 
     @Test
     void testCreateNewAuthor() throws Exception {
-        AuthorDTO authorDTO = authorServiceImpl.getAllAuthors().get(0);
+        AuthorDTO authorDTO = authorServiceImpl.listAuthors(null, null, 1, 50).getContent().get(0);
 
-        given(authorService.saveNewAuthor(any(AuthorDTO.class))).willReturn(authorServiceImpl.getAllAuthors().get(1));
+        given(authorService.saveNewAuthor(any(AuthorDTO.class))).willReturn(authorServiceImpl.listAuthors(null, null, 1, 50).getContent().get(1));
 
         mockMvc.perform(post(AuthorController.AUTHOR_PATH)
                         .accept(MediaType.APPLICATION_JSON)
@@ -141,15 +141,15 @@ class AuthorControllerTest {
     }
 
     @Test
-    void testListAllAuthors() throws Exception {
+    void testListAuthors() throws Exception {
 
-        given(authorService.getAllAuthors()).willReturn(authorServiceImpl.getAllAuthors());
+        given(authorService.listAuthors(any(),any(), any(), any())).willReturn(authorServiceImpl.listAuthors(null, null, 1, 50));
 
         mockMvc.perform(get(AuthorController.AUTHOR_PATH)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()", is(3)));
+                .andExpect(jsonPath("$.content.length()", is(3)));
     }
 
     @Test
@@ -164,7 +164,7 @@ class AuthorControllerTest {
 
     @Test
     void getAuthorById() throws Exception {
-        AuthorDTO author = authorServiceImpl.getAllAuthors().get(0);
+        AuthorDTO author = authorServiceImpl.listAuthors(null, null, 1, 50).getContent().get(0);
 
         given(authorService.getAuthorById(author.getId())).willReturn(Optional.of(author));
 

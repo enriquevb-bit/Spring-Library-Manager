@@ -3,12 +3,12 @@ package enriquevb.biblioteca.controllers;
 import enriquevb.biblioteca.models.AuthorDTO;
 import enriquevb.biblioteca.services.AuthorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -61,8 +61,11 @@ public class AuthorController {
     }
 
     @GetMapping(AUTHOR_PATH)
-    public List<AuthorDTO> listAllAuthors() {
-        return authorService.getAllAuthors();
+    public Page<AuthorDTO> listAuthors(@RequestParam(required = false) String fullName,
+                                       @RequestParam(required = false) String nationality,
+                                       @RequestParam(required = false) Integer pageNumber,
+                                       @RequestParam(required = false) Integer pageSize) {
+        return authorService.listAuthors(fullName, nationality, pageNumber, pageSize);
     }
 
     @GetMapping(value = AUTHOR_PATH_ID)
