@@ -1,5 +1,6 @@
 package enriquevb.biblioteca.controllers;
 
+import enriquevb.biblioteca.config.SpringSecConfig;
 import enriquevb.biblioteca.models.BookDTO;
 import enriquevb.biblioteca.services.BookService;
 import enriquevb.biblioteca.services.BookServiceImpl;
@@ -11,12 +12,15 @@ import org.mockito.Captor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import tools.jackson.databind.ObjectMapper;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -27,10 +31,12 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(BookController.class)
+@Import(SpringSecConfig.class)
 @ExtendWith(MockitoExtension.class)
 class BookControllerTest {
 
@@ -51,6 +57,16 @@ class BookControllerTest {
     @Captor
     ArgumentCaptor<BookDTO> beerArgumentCaptor;
 
+    public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor =
+            jwt().jwt(jwt -> {
+                jwt.claims(claims -> {
+                            claims.put("scope", "openid");
+                            claims.put("scope", "profile");
+                        })
+                        .subject("oidc-client")
+                        .notBefore(Instant.now().minusSeconds(5));
+            });
+
     @BeforeEach
     void setUp() {
         bookServiceImpl = new BookServiceImpl();
@@ -64,6 +80,7 @@ class BookControllerTest {
         bookMap.put("title", "New Title");
 
         mockMvc.perform(patch(BookController.BOOK_PATH_ID, bookDTO.getId())
+                        .with(jwtRequestPostProcessor)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(bookMap)))
@@ -82,6 +99,7 @@ class BookControllerTest {
         given(bookService.deleteById(any(UUID.class))).willReturn(true);
 
         mockMvc.perform(delete(BookController.BOOK_PATH_ID, bookDTO.getId())
+                        .with(jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
@@ -97,6 +115,7 @@ class BookControllerTest {
         given(bookService.updateBookById(any(),any())).willReturn(Optional.of(bookDTO));
 
         mockMvc.perform(put(BookController.BOOK_PATH_ID, bookDTO.getId())
+                        .with(jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(bookDTO)))
@@ -112,6 +131,7 @@ class BookControllerTest {
         bookDTO.setTitle("");
 
         mockMvc.perform(put(BookController.BOOK_PATH_ID, bookDTO.getId())
+                        .with(jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(bookDTO)))
@@ -126,6 +146,7 @@ class BookControllerTest {
         given(bookService.saveNewBook(any(BookDTO.class))).willReturn(bookServiceImpl.listBooks(null, null, 1, 50).getContent().get(1));
 
         mockMvc.perform(post(BookController.BOOK_PATH)
+                        .with(jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(bookDTO)))
@@ -139,6 +160,7 @@ class BookControllerTest {
         BookDTO bookDTO = BookDTO.builder().build();
 
         MvcResult result = mockMvc.perform(post(BookController.BOOK_PATH)
+                        .with(jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(bookDTO)))
@@ -155,6 +177,7 @@ class BookControllerTest {
         given(bookService.listBooks(any(), any(), any(), any())).willReturn(bookServiceImpl.listBooks(null, null, 1, 50));
 
         mockMvc.perform(get(BookController.BOOK_PATH)
+                        .with(jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -167,6 +190,7 @@ class BookControllerTest {
         given(bookService.getBookById(any(UUID.class))).willReturn(Optional.empty());
 
         mockMvc.perform(get(BookController.BOOK_PATH_ID, UUID.randomUUID())
+                        .with(jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -178,6 +202,7 @@ class BookControllerTest {
         given(bookService.getBookById(book.getId())).willReturn(Optional.of(book));
 
         mockMvc.perform(get(BookController.BOOK_PATH_ID, book.getId())
+                        .with(jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
