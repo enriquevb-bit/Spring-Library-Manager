@@ -1,5 +1,6 @@
 package enriquevb.biblioteca.controllers;
 
+import enriquevb.biblioteca.config.SpringSecConfig;
 import enriquevb.biblioteca.entities.Book;
 import enriquevb.biblioteca.mappers.BookMapper;
 import enriquevb.biblioteca.models.BookDTO;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -17,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
@@ -56,12 +59,16 @@ class BookControllerIT {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(wac)
+                .apply(springSecurity())
+                .build();
     }
 
     @Test
     void testListBooksDefaultPagination() throws Exception {
-        mockMvc.perform(get(BookController.BOOK_PATH))
+        mockMvc.perform(get(BookController.BOOK_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").exists());
     }
@@ -69,6 +76,7 @@ class BookControllerIT {
     @Test
     void testListBooksWithPagination() throws Exception {
         mockMvc.perform(get(BookController.BOOK_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .queryParam("title", "The Hunger Games")
                         .queryParam("isbn", "978-0321125217")
                         .queryParam("pageNumber", "1")
@@ -80,6 +88,7 @@ class BookControllerIT {
     @Test
     void testListBooksByTitleAndIsbn() throws Exception {
         mockMvc.perform(get(BookController.BOOK_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .queryParam("title", "The Hunger Games")
                         .queryParam("isbn", "978-0321125217"))
                 .andExpect(status().isOk())
@@ -89,6 +98,7 @@ class BookControllerIT {
     @Test
     void testListBooksByIsbn() throws Exception {
         mockMvc.perform(get(BookController.BOOK_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .queryParam("isbn", "978-0132350884"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(1)));
@@ -97,6 +107,7 @@ class BookControllerIT {
     @Test
     void testListBooksByTitle() throws Exception {
         mockMvc.perform(get(BookController.BOOK_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .queryParam("title", "The Hunger Games"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(1)));
@@ -110,6 +121,7 @@ class BookControllerIT {
         bookMap.put("title", "New title 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
 
         mockMvc.perform(patch(BookController.BOOK_PATH_ID, book.getId())
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(bookMap)))

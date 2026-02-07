@@ -26,6 +26,7 @@ import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,12 +57,16 @@ class AuthorControllerIT {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(wac)
+                .apply(springSecurity())
+                .build();
     }
 
     @Test
     void testListAuthorsDefaultPagination() throws Exception {
-        mockMvc.perform(get(AuthorController.AUTHOR_PATH))
+        mockMvc.perform(get(AuthorController.AUTHOR_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").exists());
     }
@@ -69,6 +74,7 @@ class AuthorControllerIT {
     @Test
     void testListAuthorsWithPagination() throws Exception {
         mockMvc.perform(get(AuthorController.AUTHOR_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .queryParam("fullName", "John Ronald Reuel Tolkien")
                         .queryParam("nationality", "British")
                         .queryParam("pageNumber", "1")
@@ -80,6 +86,7 @@ class AuthorControllerIT {
     @Test
     void testListAuthorsByNameAndNationality() throws Exception {
         mockMvc.perform(get(AuthorController.AUTHOR_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .queryParam("fullName", "John Ronald Reuel Tolkien")
                         .queryParam("nationality", "British"))
                 .andExpect(status().isOk())
@@ -89,6 +96,7 @@ class AuthorControllerIT {
     @Test
     void testListAuthorsByNationality() throws Exception {
         mockMvc.perform(get(AuthorController.AUTHOR_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .queryParam("nationality", "British"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(1)));
@@ -97,6 +105,7 @@ class AuthorControllerIT {
     @Test
     void testListAuthorsByName() throws Exception {
         mockMvc.perform(get(AuthorController.AUTHOR_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .queryParam("fullName", "John Ronald Reuel Tolkien"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(1)));
@@ -110,6 +119,7 @@ class AuthorControllerIT {
         authorMap.put("fullName", "New name 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
 
         mockMvc.perform(patch(AuthorController.AUTHOR_PATH_ID, author.getId())
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authorMap)))

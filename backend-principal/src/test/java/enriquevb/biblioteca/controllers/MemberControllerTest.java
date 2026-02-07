@@ -1,5 +1,6 @@
 package enriquevb.biblioteca.controllers;
 
+import enriquevb.biblioteca.config.SpringSecConfig;
 import enriquevb.biblioteca.models.MemberDTO;
 import enriquevb.biblioteca.services.MemberService;
 import enriquevb.biblioteca.services.MemberServiceImpl;
@@ -11,6 +12,7 @@ import org.mockito.Captor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(MemberController.class)
 @ExtendWith(MockitoExtension.class)
+@Import(SpringSecConfig.class)
 class MemberControllerTest {
 
     @Autowired
@@ -63,6 +66,7 @@ class MemberControllerTest {
         memberMap.put("name", "New Member Name");
 
         mockMvc.perform(patch(MemberController.MEMBER_PATH_ID, memberDTO.getId())
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberMap)))
@@ -81,6 +85,7 @@ class MemberControllerTest {
         given(memberService.deleteMemberById(any(UUID.class))).willReturn(true);
 
         mockMvc.perform(delete(MemberController.MEMBER_PATH_ID, memberDTO.getId())
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
@@ -94,6 +99,7 @@ class MemberControllerTest {
         given(memberService.deleteMemberById(any(UUID.class))).willReturn(false);
 
         mockMvc.perform(delete(MemberController.MEMBER_PATH_ID, UUID.randomUUID())
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -105,6 +111,7 @@ class MemberControllerTest {
         given(memberService.updateMemberById(any(), any())).willReturn(Optional.of(memberDTO));
 
         mockMvc.perform(put(MemberController.MEMBER_PATH_ID, memberDTO.getId())
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberDTO)))
@@ -120,6 +127,7 @@ class MemberControllerTest {
         given(memberService.updateMemberById(any(), any())).willReturn(Optional.empty());
 
         mockMvc.perform(put(MemberController.MEMBER_PATH_ID, memberDTO.getId())
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberDTO)))
@@ -133,6 +141,7 @@ class MemberControllerTest {
         given(memberService.saveNewMember(any(MemberDTO.class))).willReturn(memberServiceImpl.listMembers(null, null, 1, 25).getContent().get(1));
 
         mockMvc.perform(post(MemberController.MEMBER_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberDTO)))
@@ -146,6 +155,7 @@ class MemberControllerTest {
         given(memberService.listMembers(any(), any(), any(), any())).willReturn(memberServiceImpl.listMembers(null, null, 1, 25));
 
         mockMvc.perform(get(MemberController.MEMBER_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -158,6 +168,7 @@ class MemberControllerTest {
         given(memberService.getMemberById(any(UUID.class))).willReturn(Optional.empty());
 
         mockMvc.perform(get(MemberController.MEMBER_PATH_ID, UUID.randomUUID())
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -169,6 +180,7 @@ class MemberControllerTest {
         given(memberService.getMemberById(member.getId())).willReturn(Optional.of(member));
 
         mockMvc.perform(get(MemberController.MEMBER_PATH_ID, member.getId())
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

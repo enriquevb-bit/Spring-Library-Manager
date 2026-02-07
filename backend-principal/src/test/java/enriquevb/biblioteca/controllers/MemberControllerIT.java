@@ -26,6 +26,7 @@ import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,12 +57,16 @@ class MemberControllerIT {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(wac)
+                .apply(springSecurity())
+                .build();
     }
 
     @Test
     void testListMembersDefaultPagination() throws Exception {
-        mockMvc.perform(get(MemberController.MEMBER_PATH))
+        mockMvc.perform(get(MemberController.MEMBER_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").exists());
     }
@@ -69,6 +74,7 @@ class MemberControllerIT {
     @Test
     void testListMembersWithPagination() throws Exception {
         mockMvc.perform(get(MemberController.MEMBER_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .queryParam("name", "María García")
                         .queryParam("email", "maria.garcia@test.com")
                         .queryParam("pageNumber", "1")
@@ -80,6 +86,7 @@ class MemberControllerIT {
     @Test
     void testListMembersByNameAndEmail() throws Exception {
         mockMvc.perform(get(MemberController.MEMBER_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .queryParam("name", "María García")
                         .queryParam("email", "maria.garcia@test.com"))
                 .andExpect(status().isOk())
@@ -89,6 +96,7 @@ class MemberControllerIT {
     @Test
     void testListMembersByEmail() throws Exception {
         mockMvc.perform(get(MemberController.MEMBER_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .queryParam("email", "maria.garcia@test.com"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(1)));
@@ -97,6 +105,7 @@ class MemberControllerIT {
     @Test
     void testListMembersByName() throws Exception {
         mockMvc.perform(get(MemberController.MEMBER_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .queryParam("name", "María García"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(1)));
@@ -110,6 +119,7 @@ class MemberControllerIT {
         memberMap.put("name", "New name sadggggggggggaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafd");
 
         mockMvc.perform(patch(MemberController.MEMBER_PATH_ID, member.getId())
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberMap)))

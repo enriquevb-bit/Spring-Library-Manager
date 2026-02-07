@@ -1,5 +1,6 @@
 package enriquevb.biblioteca.controllers;
 
+import enriquevb.biblioteca.config.SpringSecConfig;
 import enriquevb.biblioteca.models.AuthorDTO;
 import enriquevb.biblioteca.services.AuthorService;
 import enriquevb.biblioteca.services.AuthorServiceImpl;
@@ -11,6 +12,7 @@ import org.mockito.Captor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AuthorController.class)
 @ExtendWith(MockitoExtension.class)
+@Import(SpringSecConfig.class)
 class AuthorControllerTest {
 
     @Autowired
@@ -63,6 +66,7 @@ class AuthorControllerTest {
         authorMap.put("fullName", "New Author Name");
 
         mockMvc.perform(patch(AuthorController.AUTHOR_PATH_ID, authorDTO.getId())
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authorMap)))
@@ -81,6 +85,7 @@ class AuthorControllerTest {
         given(authorService.deleteAuthorById(any(UUID.class))).willReturn(true);
 
         mockMvc.perform(delete(AuthorController.AUTHOR_PATH_ID, authorDTO.getId())
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
@@ -94,6 +99,7 @@ class AuthorControllerTest {
         given(authorService.deleteAuthorById(any(UUID.class))).willReturn(false);
 
         mockMvc.perform(delete(AuthorController.AUTHOR_PATH_ID, UUID.randomUUID())
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -105,6 +111,7 @@ class AuthorControllerTest {
         given(authorService.updateAuthorById(any(), any())).willReturn(Optional.of(authorDTO));
 
         mockMvc.perform(put(AuthorController.AUTHOR_PATH_ID, authorDTO.getId())
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authorDTO)))
@@ -120,6 +127,7 @@ class AuthorControllerTest {
         given(authorService.updateAuthorById(any(), any())).willReturn(Optional.empty());
 
         mockMvc.perform(put(AuthorController.AUTHOR_PATH_ID, authorDTO.getId())
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authorDTO)))
@@ -133,6 +141,7 @@ class AuthorControllerTest {
         given(authorService.saveNewAuthor(any(AuthorDTO.class))).willReturn(authorServiceImpl.listAuthors(null, null, 1, 50).getContent().get(1));
 
         mockMvc.perform(post(AuthorController.AUTHOR_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authorDTO)))
@@ -146,6 +155,7 @@ class AuthorControllerTest {
         given(authorService.listAuthors(any(),any(), any(), any())).willReturn(authorServiceImpl.listAuthors(null, null, 1, 50));
 
         mockMvc.perform(get(AuthorController.AUTHOR_PATH)
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -158,6 +168,7 @@ class AuthorControllerTest {
         given(authorService.getAuthorById(any(UUID.class))).willReturn(Optional.empty());
 
         mockMvc.perform(get(AuthorController.AUTHOR_PATH_ID, UUID.randomUUID())
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -169,6 +180,7 @@ class AuthorControllerTest {
         given(authorService.getAuthorById(author.getId())).willReturn(Optional.of(author));
 
         mockMvc.perform(get(AuthorController.AUTHOR_PATH_ID, author.getId())
+                        .with(BookControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
