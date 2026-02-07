@@ -1,10 +1,15 @@
 # Sistema de Gestion de Biblioteca
 
-Sistema de gestion de biblioteca desarrollado con Spring Boot que permite administrar libros, autores, miembros y préstamos a través de una API REST.
+Sistema de gestion de biblioteca desarrollado con Spring Boot que permite administrar libros, autores, miembros y préstamos a través de una API REST, protegida con OAuth2 y un servidor de autorización propio.
 
 ## Descripción
 
 Esta aplicación es un sistema backend completo para la gestión de una biblioteca. Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre las principales entidades de una biblioteca: libros, autores, miembros y préstamos.
+
+El proyecto está dividido en dos módulos:
+
+- **backend-principal**: API REST de la biblioteca (Resource Server OAuth2). Se ejecuta en el puerto `8080`.
+- **library-auth-server**: Servidor de Autorización OAuth2 con Spring Authorization Server. Se ejecuta en el puerto `9000`.
 
 El proyecto sigue las mejores prácticas de desarrollo con Spring Boot, incluyendo:
 - Arquitectura en capas, usando el MVC de Spring.
@@ -16,6 +21,7 @@ El proyecto sigue las mejores prácticas de desarrollo con Spring Boot, incluyen
 - Tests unitarios con JUnit y Mockito.
 - Tests integración con Testcontainers.
 - Optimistic Locking con @Version.
+- Seguridad con OAuth2 (Authorization Server + Resource Server con JWT).
 
 ## Tecnologías Utilizadas
 
@@ -25,6 +31,9 @@ El proyecto sigue las mejores prácticas de desarrollo con Spring Boot, incluyen
 | Spring Boot | 4.0.2 | Framework principal. |
 | Spring Data JPA | - | Persistencia de datos. |
 | Spring Validation | - | Validación de datos. |
+| Spring Security | - | Seguridad y autenticación. |
+| Spring Authorization Server | - | Servidor de autorización OAuth2/OIDC. |
+| Spring OAuth2 Resource Server | - | Protección de la API con JWT. |
 | MySQL | 8.0 | Base de datos principal. |
 | H2 Database | - | Base de datos en memoria para desarrollo. |
 | Flyway | - | Migraciones de base de datos. |
@@ -61,18 +70,18 @@ cd Spring-Library-Manager
 
 1. Abre IntelliJ IDEA.
 2. Selecciona **File > Open**.
-3. Navega hasta la carpeta `biblioteca` y seleccionala.
-4. Espera a que IntelliJ importe las dependencias de Maven.
+3. Navega hasta la carpeta `Spring-Library-Manager` y seleccionala.
+4. Espera a que IntelliJ importe las dependencias de Maven de ambos módulos.
 
 
 ### 3. Configurar la base de datos
 
-El proyecto incluye un archivo `compose.yaml` para levantar MySQL con Docker:
-
+El proyecto incluye un archivo `compose.yaml` dentro de `backend-principal` para levantar MySQL con Docker:
+Ejecuta este comando en la terminal de IntelliJ del proyecto:
 ```bash
 docker compose up -d
 ```
-También puedes ejecutar este comando en la terminal de IntelliJ.
+
 
 Esto creará un contenedor MySQL con la siguiente configuración:
 - **Base de datos:** librarydb
@@ -82,12 +91,22 @@ Esto creará un contenedor MySQL con la siguiente configuración:
 
 ## Ejecución
 
-### Modo desarrollo (H2 en memoria)
+> **Importante:** Debes ejecutar **ambos módulos** para que la aplicación funcione correctamente. El Auth Server debe estar corriendo antes de hacer peticiones a la API.
+
+### 1. Iniciar el Auth Server (`library-auth-server`)
+
+1. Abre la clase `LibraryAuthServerApplication.java` (dentro de `library-auth-server`)
+2. Haz clic en el icono verde **Run** (triangulo) junto al metodo `main`
+3. Verifica que arranca en el puerto **9000**
+
+### 2. Iniciar el Backend Principal (`backend-principal`)
+
+#### Modo desarrollo (H2 en memoria)
 
 Por defecto, la aplicación usa H2 como base de datos en memoria:
 
-1. Abre la clase `BibliotecaApplication.java`
-2. Haz clic en el icono verde **Run** (triangulo) junto al metodo `main`
+1. Abre la clase `BibliotecaApplication.java` (dentro de `backend-principal`)
+2. Haz clic en el icono verde **Run** (triangulo) junto al método `main`
 3. O usa el atajo `Shift + F10`
 
 ### Modo con MySQL local
@@ -99,6 +118,42 @@ Para usar MySQL, activa el perfil `localmysql`:
 3. Haz clic en **Apply** y luego **Run**
 
 La aplicacion estará disponible en: `http://localhost:8080`
+El Auth Server estará disponible en: `http://localhost:9000`
+
+## Configuración de Postman con OAuth2
+
+Todas las peticiones a la API requieren un **token JWT** emitido por el Auth Server. A continuación se explica cómo configurar Postman para obtenerlo automáticamente.
+
+### Client Credentials
+
+Este flujo obtiene un token directamente sin necesidad de iniciar sesión con usuario y contraseña.
+
+1. En Postman, crea una nueva colección llamada "Biblioteca API".
+2. Haz clic derecho en la colección > **Edit** > pestaña **Authorization**.
+3. Configura los siguientes campos:
+
+| Campo | Valor |
+|-------|-------|
+| **Auth Type** | `OAuth 2.0` |
+| **Grant Type** | `Client Credentials` |
+| **Access Token URL** | `http://localhost:9000/oauth2/token` |
+| **Client ID** | `oidc-client` |
+| **Client Secret** | `secret` |
+| **Scope** | `openid` |
+| **Client Authentication** | `Send as Basic Auth header` |
+
+4. Haz clic en **Get New Access Token**.
+5. Postman obtendrá un token JWT automáticamente. Haz clic en **Use Token**.
+6. Todas las peticiones dentro de la colección heredarán este token si en su pestaña **Authorization** seleccionas **Inherit auth from parent**.
+
+### Configuración del entorno
+
+Opcionalmente, configura una variable de entorno en el apartado **Environments** de Postman:
+
+| Variable | Valor |
+|----------|-------|
+| `base_url` | `http://localhost:8080` |
+
 
 ## API Endpoints
 
@@ -155,10 +210,7 @@ La aplicacion estará disponible en: `http://localhost:8080`
 
 ## Ejemplos de Uso con Postman
 
-### Configuración inicial de Postman
-
-1. Abre Postman y crea una nueva colección llamada "Biblioteca API"
-2. Configura una variable de entorno en el apartado **Environments** `base_url` con valor `http://localhost:8080`
+> **Recuerda:** Todas las peticiones requieren un token OAuth2 válido. Configura la autorización a nivel de colección como se explica en la sección [Configuración de Postman con OAuth2](#configuración-de-postman-con-oauth2) y asegúrate de que cada petición tenga **Inherit auth from parent** en su pestaña Authorization.
 
 ### Obtener todos los libros
 
