@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -28,6 +29,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -70,6 +72,17 @@ class BookControllerTest {
     @BeforeEach
     void setUp() {
         bookServiceImpl = new BookServiceImpl();
+    }
+
+    @Test
+    void testNoAuth() throws Exception {
+        BookDTO book = bookServiceImpl.listBooks(null, null, 1, 50).getContent().get(0);
+
+        given(bookService.getBookById(book.getId())).willReturn(Optional.of(book));
+
+        mockMvc.perform(get(BookController.BOOK_PATH_ID, book.getId())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
