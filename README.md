@@ -1,140 +1,172 @@
-# Sistema de Gestion de Biblioteca
+> **Leer en español:** [README.es.md](README.es.md)
 
-Sistema de gestion de biblioteca desarrollado con Spring Boot que permite administrar libros, autores, miembros y préstamos a través de una API REST, protegida con OAuth2 y un servidor de autorización propio.
 
-## Descripción
+# Library Management System
 
-Esta aplicación es un sistema backend completo para la gestión de una biblioteca. Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre las principales entidades de una biblioteca: libros, autores, miembros y préstamos.
+Library management system built with Spring Boot that allows managing books, authors, members and loans through a REST API, secured with OAuth2 and a custom authorization server.
 
-El proyecto está dividido en dos módulos:
+## Description
 
-- **backend-principal**: API REST de la biblioteca (Resource Server OAuth2). Se ejecuta en el puerto `8080`.
-- **library-auth-server**: Servidor de Autorización OAuth2 con Spring Authorization Server. Se ejecuta en el puerto `9000`.
+This application is a complete backend system for managing a library. It supports CRUD operations (Create, Read, Update, Delete) on the main library entities: books, authors, members and loans.
 
-El proyecto sigue las mejores prácticas de desarrollo con Spring Boot, incluyendo:
-- Arquitectura en capas, usando el MVC de Spring.
-- Uso de DTOs para transferencia de datos.
-- Validación de datos de entrada.
-- Paginación de resultados.
-- Mapeo automático entre entidades y DTOs con MapStruct.
-- Migraciones de base de datos con Flyway.
-- Tests unitarios con JUnit y Mockito.
-- Tests integración con Testcontainers.
-- Optimistic Locking con @Version.
-- Seguridad con OAuth2 (Authorization Server + Resource Server con JWT).
-- Documentación de la API con OpenAPI 3 y Swagger UI.
+The project is split into two modules:
 
-## Tecnologías Utilizadas
+- **backend-principal**: Library REST API (OAuth2 Resource Server). Runs on port `8080`.
+- **library-auth-server**: OAuth2 Authorization Server with Spring Authorization Server. Runs on port `9000`.
 
-| Tecnología | Versión | Descripción |
+The project follows Spring Boot development best practices, including:
+- Layered architecture using Spring MVC.
+- DTOs for data transfer.
+- Input data validation.
+- Paginated results.
+- Automatic entity-DTO mapping with MapStruct.
+- Database migrations with Flyway.
+- Security with OAuth2 (Authorization Server + Resource Server with JWT).
+- Unit tests with JUnit and Mockito.
+- Integration tests with Testcontainers.
+- Optimistic Locking with @Version.
+- API documentation with OpenAPI 3 and Swagger UI.
+
+## Technologies
+
+| Technology | Version | Description |
 |------------|---------|-------------|
-| Java | 25 | Lenguaje de programación. |
-| Spring Boot | 4.0.2 | Framework principal. |
-| Spring Data JPA | - | Persistencia de datos. |
-| Spring Validation | - | Validación de datos. |
-| Spring Security | - | Seguridad y autenticación. |
-| Spring Authorization Server | - | Servidor de autorización OAuth2/OIDC. |
-| Spring OAuth2 Resource Server | - | Protección de la API con JWT. |
-| springdoc-openapi | 3.0.1 | Documentación OpenAPI 3 y Swagger UI. |
-| MySQL | 8.0 | Base de datos principal. |
-| H2 Database | - | Base de datos en memoria para desarrollo. |
-| Flyway | - | Migraciones de base de datos. |
-| Lombok | - | Reducción de código boilerplate. |
-| MapStruct | 1.6.3 | Mapeo entre entidades y DTOs. |
-| Docker Compose | - | Orquestación de contenedores. |
-| JUnit 5 | - | Framework de testing |
-| Mockito | - | Mocking en tests unitarios |
-| Testcontainers | - | Tests de integración con contenedores. |
-| Maven | - | Gestión de dependencias. |
+| Java | 25 | Programming language. |
+| Spring Boot | 4.0.2 | Main framework. |
+| Spring Data JPA | - | Data persistence. |
+| Spring Validation | - | Data validation. |
+| Spring Security | - | Security and authentication. |
+| Spring Authorization Server | - | OAuth2/OIDC authorization server. |
+| Spring OAuth2 Resource Server | - | API protection with JWT. |
+| springdoc-openapi | 3.0.1 | OpenAPI 3 documentation and Swagger UI. |
+| MySQL | 8.0 | Main database. |
+| H2 Database | - | In-memory database for development. |
+| Flyway | - | Database migrations. |
+| Lombok | - | Boilerplate code reduction. |
+| MapStruct | 1.6.3 | Entity-DTO mapping. |
+| Docker Compose | - | Container orchestration. |
+| JUnit 5 | - | Testing framework. |
+| Mockito | - | Unit test mocking. |
+| Testcontainers | - | Integration tests with containers. |
+| Maven | - | Dependency management. |
 
-## Requisitos Previos
+## Prerequisites
 
-Antes de ejecutar el proyecto, asegúrate de tener instalado:
+Make sure you have the following installed before running the project:
 
-- **Java 25** o superior.
-- **IntelliJ IDEA** (Community o Ultimate).
-- **Docker Desktop** (para la base de datos MySQL, incluye Docker y Docker Compose)
-- **Git** (para clonar el repositorio).
-- **Postman** (opcional, para probar la API).
-- **MySQL Workbench** (opcional, para ver la base de datos y las relaciones entre tablas).
+- **Java 25** or higher.
+- **IntelliJ IDEA** (Community or Ultimate).
+- **Docker Desktop** (for the MySQL database; includes Docker and Docker Compose).
+- **Git** (to clone the repository).
+- **Postman** (optional, for testing the API).
+- **MySQL Workbench** (optional, for browsing the database and table relationships).
 
-## Instalación
+## Installation
 
-### 1. Clonar el repositorio
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/enriquevb-bit/Spring-Library-Manager.git
 cd Spring-Library-Manager
 ```
 
+### 2. Open in IntelliJ IDEA
 
-### 2. Abrir en IntelliJ IDEA
+1. Open IntelliJ IDEA.
+2. Select **File > Open**.
+3. Navigate to the `Spring-Library-Manager` folder and select it.
+4. Wait for IntelliJ to import the Maven dependencies for both modules.
 
-1. Abre IntelliJ IDEA.
-2. Selecciona **File > Open**.
-3. Navega hasta la carpeta `Spring-Library-Manager` y seleccionala.
-4. Espera a que IntelliJ importe las dependencias de Maven de ambos módulos.
+### 3. Set up the database
 
+The project includes a `compose.yaml` file inside `backend-principal` to spin up MySQL with Docker:
 
-### 3. Configurar la base de datos
-
-El proyecto incluye un archivo `compose.yaml` dentro de `backend-principal` para levantar MySQL con Docker:
-Ejecuta este comando en la terminal de IntelliJ del proyecto:
 ```bash
+cd backend-principal
 docker compose up -d
 ```
+You can also run this command from IntelliJ's built-in terminal.
 
-
-Esto creará un contenedor MySQL con la siguiente configuración:
-- **Base de datos:** librarydb
-- **Usuario:** libraryAdmin
+This will create a MySQL container with the following configuration:
+- **Database:** librarydb
+- **User:** libraryAdmin
 - **Password:** password
-- **Puerto:** 3308 (mapeado al 3306 del contenedor)
+- **Port:** 3308 (mapped to container port 3306)
 
-## Ejecución
+## Running the Application
 
-> **Importante:** Debes ejecutar **ambos módulos** para que la aplicación funcione correctamente. El Auth Server debe estar corriendo antes de hacer peticiones a la API.
+> **Important:** You must run **both modules** for the application to work correctly. The Auth Server must be running before making requests to the API.
 
-### 1. Iniciar el Auth Server (`library-auth-server`)
+### 1. Start the Auth Server (`library-auth-server`)
 
-1. Abre la clase `LibraryAuthServerApplication.java` (dentro de `library-auth-server`)
-2. Haz clic en el icono verde **Run** (triangulo) junto al metodo `main`
-3. Verifica que arranca en el puerto **9000**
+1. Open the `LibraryAuthServerApplication.java` class (inside `library-auth-server`)
+2. Click the green **Run** icon (triangle) next to the `main` method
+3. Verify it starts on port **9000**
 
-### 2. Iniciar el Backend Principal (`backend-principal`)
+### 2. Start the Main Backend (`backend-principal`)
 
-#### Modo desarrollo (H2 en memoria)
+#### Development mode (H2 in-memory)
 
-Por defecto, la aplicación usa H2 como base de datos en memoria:
+By default, the application uses H2 as an in-memory database:
 
-1. Abre la clase `BibliotecaApplication.java` (dentro de `backend-principal`)
-2. Haz clic en el icono verde **Run** (triangulo) junto al método `main`
-3. O usa el atajo `Shift + F10`
+1. Open the `BibliotecaApplication.java` class (inside `backend-principal`)
+2. Click the green **Run** icon (triangle) next to the `main` method
+3. Or use the shortcut `Shift + F10`
 
-### Modo con MySQL local
+#### Local MySQL mode
 
-Para usar MySQL, activa el perfil `localmysql`:
+To use MySQL, activate the `localmysql` profile:
 
-1. En IntelliJ, haz clic en el nombre a la izquierda del botón **Run** y dale a **Edit Configurations**.
-2. En **Active profiles** escribe: `localmysql` (asegúrate de haber seleccionado **BibliotecaApplication** en el selector de la izquierda).
-3. Haz clic en **Apply** y luego **Run**
+1. In IntelliJ, click the name to the left of the **Run** button and select **Edit Configurations**.
+2. In **Active profiles** type: `localmysql` (make sure **BibliotecaApplication** is selected on the left).
+3. Click **Apply** and then **Run**
 
-La aplicacion estará disponible en: `http://localhost:8080`
-El Auth Server estará disponible en: `http://localhost:9000`
+The API will be available at: `http://localhost:8080`
+The Auth Server will be available at: `http://localhost:9000`
 
-## Configuración de Postman con OAuth2
+## API Documentation (OpenAPI / Swagger)
 
-Todas las peticiones a la API requieren un **token JWT** emitido por el Auth Server. A continuación se explica cómo configurar Postman para obtenerlo automáticamente.
+The project includes interactive API documentation automatically generated with **springdoc-openapi**.
 
-### Client Credentials
+### Runtime access
 
-Este flujo obtiene un token directamente sin necesidad de iniciar sesión con usuario y contraseña.
+With the application running, you can access:
 
-1. En Postman, crea una nueva colección llamada "Biblioteca API".
-2. Haz clic derecho en la colección > **Edit** > pestaña **Authorization**.
-3. Configura los siguientes campos:
+| Resource | URL |
+|----------|-----|
+| **Swagger UI** | `http://localhost:8080/swagger-ui/index.html` |
+| **OpenAPI JSON** | `http://localhost:8080/v3/api-docs` |
+| **OpenAPI YAML** | `http://localhost:8080/v3/api-docs.yaml` |
 
-| Campo | Valor |
+> **Note:** Documentation endpoints are public (no OAuth2 authentication required). All other API endpoints require a valid JWT token.
+
+### YAML file generation with Maven
+
+The project is configured with the `springdoc-openapi-maven-plugin` to automatically generate an `oa3.yaml` file with the OpenAPI specification during Maven's `verify` phase:
+
+```bash
+mvn verify
+```
+
+Or from IntelliJ IDEA: open the **Maven** panel (right sidebar) > **biblioteca** > **Lifecycle** > double-click **verify**.
+
+This temporarily starts the application, downloads the specification from `/v3/api-docs.yaml` and generates the `oa3.yaml` file in the project's `target` directory.
+
+> **Note:** For this to work, the Auth Server (`library-auth-server`) must be running on port 9000, since the application needs to connect to the OAuth2 issuer on startup.
+
+## Postman OAuth2 Setup
+
+All API requests require a **JWT token** issued by the Auth Server. Below is how to configure Postman to obtain it automatically.
+
+### Option 1: Client Credentials (recommended for Postman testing)
+
+This flow obtains a token directly without requiring a user login.
+
+1. In Postman, create a new collection called "Biblioteca API".
+2. Right-click the collection > **Edit** > **Authorization** tab.
+3. Configure the following fields:
+
+| Field | Value |
 |-------|-------|
 | **Auth Type** | `OAuth 2.0` |
 | **Grant Type** | `Client Credentials` |
@@ -144,126 +176,123 @@ Este flujo obtiene un token directamente sin necesidad de iniciar sesión con us
 | **Scope** | `openid` |
 | **Client Authentication** | `Send as Basic Auth header` |
 
-4. Haz clic en **Get New Access Token**.
-5. Postman obtendrá un token JWT automáticamente. Haz clic en **Use Token**.
-6. Todas las peticiones dentro de la colección heredarán este token si en su pestaña **Authorization** seleccionas **Inherit auth from parent**.
+4. Click **Get New Access Token**.
+5. Postman will automatically obtain a JWT token. Click **Use Token**.
+6. All requests within the collection will inherit this token if you select **Inherit auth from parent** in their **Authorization** tab.
 
-### Configuración del entorno
+### Option 2: Authorization Code (interactive login flow)
 
-Opcionalmente, configura una variable de entorno en el apartado **Environments** de Postman:
+This flow redirects to a login page where you enter a username and password.
 
-| Variable | Valor |
+1. Configure the collection's authorization with these fields:
+
+| Field | Value |
+|-------|-------|
+| **Auth Type** | `OAuth 2.0` |
+| **Grant Type** | `Authorization Code` |
+| **Auth URL** | `http://localhost:9000/oauth2/authorize` |
+| **Access Token URL** | `http://localhost:9000/oauth2/token` |
+| **Client ID** | `oidc-client` |
+| **Client Secret** | `secret` |
+| **Callback URL** | `http://127.0.0.1:8080/login/oauth2/code/oidc-client` |
+| **Scope** | `openid profile` |
+| **Client Authentication** | `Send as Basic Auth header` |
+
+2. Click **Get New Access Token**.
+3. A browser window will open with the login form. Use the following credentials:
+
+| Field | Value |
+|-------|-------|
+| **Username** | `user` |
+| **Password** | `password` |
+
+4. Accept the consent for the requested scopes.
+5. Postman will receive the token. Click **Use Token**.
+
+### Environment setup
+
+Optionally, configure an environment variable under Postman's **Environments** section:
+
+| Variable | Value |
 |----------|-------|
 | `base_url` | `http://localhost:8080` |
 
-
 ## API Endpoints
 
-### Libros (Books)
+### Books
 
-| Método | Endpoint | Descripción |
+| Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/api/v1/book` | Listar todos los libros (paginado). |
-| `GET` | `/api/v1/book/{id}` | Obtener libro por ID. |
-| `POST` | `/api/v1/book` | Crear nuevo libro. |
-| `PUT` | `/api/v1/book/{id}` | Actualizar libro completo. |
-| `PATCH` | `/api/v1/book/{id}` | Actualizar libro parcialmente. |
-| `DELETE` | `/api/v1/book/{id}` | Eliminar libro. |
+| `GET` | `/api/v1/book` | List all books (paginated). |
+| `GET` | `/api/v1/book/{id}` | Get book by ID. |
+| `POST` | `/api/v1/book` | Create a new book. |
+| `PUT` | `/api/v1/book/{id}` | Full update of a book. |
+| `PATCH` | `/api/v1/book/{id}` | Partial update of a book. |
+| `DELETE` | `/api/v1/book/{id}` | Delete a book. |
 
-**Parámetros de consulta para listar:**
-- `title` - Filtrar por título.
-- `isbn` - Filtrar por ISBN.
-- `pageNumber` - Número de pagina (default: 0).
-- `pageSize` - Tamaño de pagina (default: 25).
+**Query parameters for listing:**
+- `title` - Filter by title.
+- `isbn` - Filter by ISBN.
+- `pageNumber` - Page number (default: 0).
+- `pageSize` - Page size (default: 25).
 
-### Autores (Authors)
+### Authors
 
-| Método | Endpoint | Descripción |
+| Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/api/v1/author` | Listar todos los autores (paginado). |
-| `GET` | `/api/v1/author/{id}` | Obtener autor por ID. |
-| `POST` | `/api/v1/author` | Crear nuevo autor. |
-| `PUT` | `/api/v1/author/{id}` | Actualizar autor completo. |
-| `PATCH` | `/api/v1/author/{id}` | Actualizar autor parcialmente. |
-| `DELETE` | `/api/v1/author/{id}` | Eliminar autor. |
+| `GET` | `/api/v1/author` | List all authors (paginated). |
+| `GET` | `/api/v1/author/{id}` | Get author by ID. |
+| `POST` | `/api/v1/author` | Create a new author. |
+| `PUT` | `/api/v1/author/{id}` | Full update of an author. |
+| `PATCH` | `/api/v1/author/{id}` | Partial update of an author. |
+| `DELETE` | `/api/v1/author/{id}` | Delete an author. |
 
-**Parámetros de consulta para listar:**
-- `fullName` - Filtrar por nombre completo.
-- `nationality` - Filtrar por nacionalidad.
-- `pageNumber` - Número de pagina.
-- `pageSize` - Tamaño de página.
+**Query parameters for listing:**
+- `fullName` - Filter by full name.
+- `nationality` - Filter by nationality.
+- `pageNumber` - Page number.
+- `pageSize` - Page size.
 
-### Miembros (Members)
+### Members
 
-| Método | Endpoint | Descripción |
+| Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/api/v1/member` | Listar todos los miembros (paginado). |
-| `GET` | `/api/v1/member/{id}` | Obtener miembro por ID. |
-| `POST` | `/api/v1/member` | Crear nuevo miembro. |
-| `PUT` | `/api/v1/member/{id}` | Actualizar miembro completo. |
-| `PATCH` | `/api/v1/member/{id}` | Actualizar miembro parcialmente. |
-| `DELETE` | `/api/v1/member/{id}` | Eliminar miembro. |
+| `GET` | `/api/v1/member` | List all members (paginated). |
+| `GET` | `/api/v1/member/{id}` | Get member by ID. |
+| `POST` | `/api/v1/member` | Create a new member. |
+| `PUT` | `/api/v1/member/{id}` | Full update of a member. |
+| `PATCH` | `/api/v1/member/{id}` | Partial update of a member. |
+| `DELETE` | `/api/v1/member/{id}` | Delete a member. |
 
-**Parámetros de consulta para listar:**
-- `name` - Filtrar por nombre.
-- `email` - Filtrar por email.
-- `pageNumber` - Número de página.
-- `pageSize` - Tamaño de página.
+**Query parameters for listing:**
+- `name` - Filter by name.
+- `email` - Filter by email.
+- `pageNumber` - Page number.
+- `pageSize` - Page size.
 
-## Documentación de la API (OpenAPI / Swagger)
+## Postman Usage Examples
 
-El proyecto incluye documentación interactiva de la API generada automáticamente con **springdoc-openapi**.
+> **Remember:** All requests require a valid OAuth2 token. Set up authorization at the collection level as described in the [Postman OAuth2 Setup](#postman-oauth2-setup) section and make sure each request has **Inherit auth from parent** selected in its Authorization tab.
 
-### Acceso en tiempo de ejecución
+### Get all books
 
-Con la aplicación arrancada, puedes acceder a:
-
-| Recurso | URL |
-|---------|-----|
-| **Swagger UI** | `http://localhost:8080/swagger-ui/index.html` |
-| **OpenAPI JSON** | `http://localhost:8080/v3/api-docs` |
-| **OpenAPI YAML** | `http://localhost:8080/v3/api-docs.yaml` |
-
-> **Nota:** Los endpoints de documentación son públicos (no requieren autenticación OAuth2). El resto de la API sí requiere un token JWT válido.
-
-### Generación del archivo YAML con Maven
-
-El proyecto está configurado con el `springdoc-openapi-maven-plugin` para generar un archivo `oa3.yaml` con la especificación OpenAPI de forma automática durante la fase `verify` de Maven:
-
-```bash
-mvn verify
-```
-
-O desde IntelliJ IDEA: abre el panel **Maven** (barra lateral derecha) > **biblioteca** > **Lifecycle** > doble clic en **verify**.
-
-Esto arranca la aplicación temporalmente, descarga la especificación desde `/v3/api-docs.yaml` y genera el archivo `oa3.yaml` en el directorio `target` del proyecto.
-
-> **Nota:** Para que la generación funcione, el Auth Server (`library-auth-server`) debe estar corriendo en el puerto 9000, ya que la aplicación necesita conectar con el issuer OAuth2 al arrancar.
-
-
-## Ejemplos de Uso con Postman
-
-> **Recuerda:** Todas las peticiones requieren un token OAuth2 válido. Configura la autorización a nivel de colección como se explica en la sección [Configuración de Postman con OAuth2](#configuración-de-postman-con-oauth2) y asegúrate de que cada petición tenga **Inherit auth from parent** en su pestaña Authorization.
-
-### Obtener todos los libros
-
-| Configuración | Valor |
-|---------------|-------|
-| **Método** | `GET` |
+| Setting | Value |
+|---------|-------|
+| **Method** | `GET` |
 | **URL** | `{{base_url}}/api/v1/book` |
 
-### Crear un libro
+### Create a book
 
-| Configuración | Valor |
-|---------------|-------|
-| **Método** | `POST` |
+| Setting | Value |
+|---------|-------|
+| **Method** | `POST` |
 | **URL** | `{{base_url}}/api/v1/book` |
 
 **Body:**
-1. Selecciona la pestaña **Body**
-2. Marca la opción **raw**
-3. En el desplegable selecciona **JSON**
-4. Escribe el JSON:
+1. Select the **Body** tab
+2. Choose **raw**
+3. Select **JSON** from the dropdown
+4. Enter the JSON:
 ```json
 {
     "isbn": "978-0134685991",
@@ -274,19 +303,19 @@ Esto arranca la aplicación temporalmente, descarga la especificación desde `/v
 }
 ```
 
-### Buscar libros por título
+### Search books by title
 
-| Configuración | Valor |
-|---------------|-------|
-| **Método** | `GET` |
+| Setting | Value |
+|---------|-------|
+| **Method** | `GET` |
 | **URL** | `{{base_url}}/api/v1/book` |
 | **Params** | `title=Java`, `pageSize=10` |
 
-### Crear un autor
+### Create an author
 
-| Configuración | Valor |
-|---------------|-------|
-| **Método** | `POST` |
+| Setting | Value |
+|---------|-------|
+| **Method** | `POST` |
 | **URL** | `{{base_url}}/api/v1/author` |
 
 **Body (raw JSON):**
@@ -298,11 +327,11 @@ Esto arranca la aplicación temporalmente, descarga la especificación desde `/v
 }
 ```
 
-### Crear un miembro
+### Create a member
 
-| Configuración | Valor |
-|---------------|-------|
-| **Método** | `POST` |
+| Setting | Value |
+|---------|-------|
+| **Method** | `POST` |
 | **URL** | `{{base_url}}/api/v1/member` |
 
 **Body (raw JSON):**
@@ -314,11 +343,11 @@ Esto arranca la aplicación temporalmente, descarga la especificación desde `/v
 }
 ```
 
-### Actualizar un libro (PUT)
+### Update a book (PUT)
 
-| Configuración | Valor |
-|---------------|-------|
-| **Método** | `PUT` |
+| Setting | Value |
+|---------|-------|
+| **Method** | `PUT` |
 | **URL** | `{{base_url}}/api/v1/book/{id}` |
 
 **Body (raw JSON):**
@@ -332,114 +361,117 @@ Esto arranca la aplicación temporalmente, descarga la especificación desde `/v
 }
 ```
 
-### Eliminar un libro
+### Delete a book
 
-| Configuración | Valor |
-|---------------|-------|
-| **Método** | `DELETE` |
+| Setting | Value |
+|---------|-------|
+| **Method** | `DELETE` |
 | **URL** | `{{base_url}}/api/v1/book/{id}` |
 
-## Modelo de Datos
+## Data Model
 
-### Ver la base de datos con MySQL Workbench
+### Browsing the database with MySQL Workbench
 
-Si quieres visualizar los datos directamente en MySQL:
+To view data directly in MySQL:
 
-1. Abre **MySQL Workbench**
-2. Crea una nueva conexión con el icono **+** junto a "MySQL Connections"
-3. Configura los datos de conexión:
+1. Open **MySQL Workbench**
+2. Create a new connection with the **+** icon next to "MySQL Connections"
+3. Set the connection details:
 
-| Campo | Valor |
+| Field | Value |
 |-------|-------|
-| Connection Name | Biblioteca (o el nombre que quieras) |
+| Connection Name | Biblioteca (or any name you prefer) |
 | Hostname | `127.0.0.1` |
 | Port | `3308` |
 | Username | `libraryAdmin` |
-| Password | `password` (clic en "Store in Vault") |
+| Password | `password` (click "Store in Vault") |
 
-4. Haz clic en **Test Connection** para verificar
-5. Haz clic en **OK** para guardar
-6. Doble clic en la conexion para abrirla
-7. En el panel izquierdo verás la base de datos `librarydb` con todas las tablas
+4. Click **Test Connection** to verify
+5. Click **OK** to save
+6. Double-click the connection to open it
+7. In the left panel you will see the `librarydb` database with all tables
 
-### Entidades Principales
+### Main Entities
 
-#### Book (Libro)
-| Campo | Tipo | Descripción |
+#### Book
+| Field | Type | Description |
 |-------|------|-------------|
-| id | UUID | Identificador unico |
-| isbn | String | Codigo ISBN (unico) |
-| title | String | Titulo del libro |
-| price | BigDecimal | Precio |
-| availableCopies | Integer | Copias disponibles |
-| publishedDate | LocalDate | Fecha de publicacion |
-| authors | Set<Author> | Autores del libro |
-| genres | Set<Genre> | Generos del libro |
+| id | UUID | Unique identifier |
+| isbn | String | ISBN code (unique) |
+| title | String | Book title |
+| price | BigDecimal | Price |
+| availableCopies | Integer | Available copies |
+| publishedDate | LocalDate | Publication date |
+| authors | Set\<Author\> | Book authors |
+| genres | Set\<Genre\> | Book genres |
 
-#### Author (Autor)
-| Campo | Tipo | Descripción |
+#### Author
+| Field | Type | Description |
 |-------|------|-------------|
-| id | UUID | Identificador unico |
-| fullName | String | Nombre completo |
-| nationality | String | Nacionalidad |
-| birthDate | LocalDate | Fecha de nacimiento |
-| books | Set<Book> | Libros del autor |
+| id | UUID | Unique identifier |
+| fullName | String | Full name |
+| nationality | String | Nationality |
+| birthDate | LocalDate | Date of birth |
+| books | Set\<Book\> | Author's books |
 
-#### Member (Miembro)
-| Campo | Tipo | Descripcion |
+#### Member
+| Field | Type | Description |
 |-------|------|-------------|
-| id | UUID | Identificador unico |
-| name | String | Nombre |
-| email | String | Correo electronico |
-| memberState | MemberState | Estado del miembro |
-| registerDate | LocalDateTime | Fecha de registro |
-| loans | Set<Loan> | Prestamos del miembro |
+| id | UUID | Unique identifier |
+| name | String | Name |
+| email | String | Email address |
+| memberState | MemberState | Member status |
+| registerDate | LocalDateTime | Registration date |
+| loans | Set\<Loan\> | Member's loans |
 
-### Estados de Miembro (MemberState)
-- `PENDING` - Registro pendiente de verificacion
-- `ACTIVE` - Miembro activo con acceso completo
-- `SUSPENDED` - Suspendido por libros vencidos o multas
-- `BLOCKED` - Bloqueado por violaciones de politica
-- `INACTIVE` - Cuenta inactiva o cancelada
+### Member States (MemberState)
+- `PENDING` - Registration pending verification
+- `ACTIVE` - Active member with full access
+- `SUSPENDED` - Suspended due to overdue books or fines
+- `BLOCKED` - Blocked due to policy violations
+- `INACTIVE` - Inactive or cancelled account
 
-### Estados de Préstamo (LoanState)
-- `ACTIVE` - Prestamo activo
-- `RETURNED` - Devuelto
-- `OVERDUE` - Vencido
-- `CANCELLED` - Cancelado
+### Loan States (LoanState)
+- `ACTIVE` - Active loan
+- `RETURNED` - Returned
+- `OVERDUE` - Overdue
+- `CANCELLED` - Cancelled
 
-## Ejecución de Tests
+## Running Tests
 
-### Desde IntelliJ IDEA
+### From IntelliJ IDEA
 
-1. **Test individual**: Clic derecho sobre una clase de test > **Run**
-2. **Todos los tests**: Clic derecho sobre la carpeta `test` > **Run 'All Tests'**
-3. O usa el atajo `Ctrl + Shift + F10` sobre un archivo de test
+1. **Single test**: Right-click on a test class > **Run**
+2. **All tests**: Right-click on the `test` folder > **Run 'All Tests'**
+3. Or use the shortcut `Ctrl + Shift + F10` on a test file
 
-### Tipos de tests
+### Test types
 
-| Tipo | Archivos | Base de datos |
-|------|----------|---------------|
-| Unitarios | `*ControllerTest.java` | Mocks (Mockito) |
-| Repositorios | `*RepositoryTest.java` | H2 en memoria |
-| Integracion | `*ControllerIT.java` | H2 en memoria |
-| Integracion MySQL | `MySqlIT.java` | MySQL (Testcontainers) |
+| Type | Files | Database |
+|------|-------|----------|
+| Unit | `*ControllerTest.java` | Mocks (Mockito) |
+| Repository | `*RepositoryTest.java` | H2 in-memory |
+| Integration | `*ControllerIT.java` | H2 in-memory |
+| MySQL Integration | `MySqlIT.java` | MySQL (Testcontainers) |
 
-**Nota:** Para ejecutar `MySqlIT.java` necesitas tener Docker corriendo, ya que usa Testcontainers para levantar MySQL.
+**Note:** To run `MySqlIT.java` you need Docker running, as it uses Testcontainers to spin up MySQL.
 
-## Configuración
+## Configuration
 
-### application.properties (Desarrollo con H2)
+### application.properties (H2 development) - backend-principal
 
 ```properties
 spring.application.name=biblioteca
+spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:9000
 spring.profiles.active=default
 spring.jpa.hibernate.ddl-auto=create-drop
+logging.level.enriquevb.biblioteca=debug
 spring.flyway.enabled=false
 spring.docker.compose.enabled=false
+spring.jpa.show-sql: true
 ```
 
-### application-localmysql.properties (MySQL)
+### application-localmysql.properties (MySQL) - backend-principal
 
 ```properties
 spring.datasource.url=jdbc:mysql://127.0.0.1:3308/librarydb
@@ -450,35 +482,56 @@ spring.flyway.enabled=false
 spring.docker.compose.enabled=true
 ```
 
-## Estructura del Proyecto
+### application.properties - library-auth-server
+
+```properties
+spring.application.name=library-auth-server
+server.port=9000
+```
+
+## Project Structure
 
 ```
-biblioteca/
-├── src/
-│   ├── main/
-│   │   ├── java/enriquevb/biblioteca/
-│   │   │   ├── BibliotecaApplication.java
-│   │   │   ├── bootstrap/
-│   │   │   ├── controllers/
-│   │   │   ├── entities/
-│   │   │   ├── models/
-│   │   │   ├── mappers/
-│   │   │   ├── repositories/
-│   │   │   └── services/
-│   │   └── resources/
-│   │       ├── application.properties
-│   │       ├── application-localmysql.properties
-│   │       └── db/migration/
-│   └── test/
-├── compose.yaml
-├── pom.xml
+Spring-Library-Manager/
+├── backend-principal/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/enriquevb/biblioteca/
+│   │   │   │   ├── BibliotecaApplication.java
+│   │   │   │   ├── bootstrap/
+│   │   │   │   ├── config/
+│   │   │   │   │   └── SpringSecConfig.java
+│   │   │   │   ├── controllers/
+│   │   │   │   ├── entities/
+│   │   │   │   ├── mappers/
+│   │   │   │   ├── models/
+│   │   │   │   ├── repositories/
+│   │   │   │   └── services/
+│   │   │   └── resources/
+│   │   │       ├── application.properties
+│   │   │       ├── application-localmysql.properties
+│   │   │       └── db/migration/
+│   │   └── test/
+│   ├── compose.yaml
+│   └── pom.xml
+├── library-auth-server/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/enriquevb/libraryauthserver/
+│   │   │   │   ├── LibraryAuthServerApplication.java
+│   │   │   │   └── config/
+│   │   │   │       └── SecurityConfig.java
+│   │   │   └── resources/
+│   │   │       └── application.properties
+│   │   └── test/
+│   └── pom.xml
 └── README.md
 ```
 
-## Autor
+## Author
 
 - **enriquevb** - [GitHub](https://github.com/enriquevb-bit)
 
 ---
 
-Desarrollado con Spring Boot.
+Built with Spring Boot.
