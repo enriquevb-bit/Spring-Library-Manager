@@ -22,6 +22,7 @@ El proyecto sigue las mejores prácticas de desarrollo con Spring Boot, incluyen
 - Tests integración con Testcontainers.
 - Optimistic Locking con @Version.
 - Seguridad con OAuth2 (Authorization Server + Resource Server con JWT).
+- Documentación de la API con OpenAPI 3 y Swagger UI.
 
 ## Tecnologías Utilizadas
 
@@ -34,6 +35,7 @@ El proyecto sigue las mejores prácticas de desarrollo con Spring Boot, incluyen
 | Spring Security | - | Seguridad y autenticación. |
 | Spring Authorization Server | - | Servidor de autorización OAuth2/OIDC. |
 | Spring OAuth2 Resource Server | - | Protección de la API con JWT. |
+| springdoc-openapi | 3.0.1 | Documentación OpenAPI 3 y Swagger UI. |
 | MySQL | 8.0 | Base de datos principal. |
 | H2 Database | - | Base de datos en memoria para desarrollo. |
 | Flyway | - | Migraciones de base de datos. |
@@ -207,6 +209,37 @@ Opcionalmente, configura una variable de entorno en el apartado **Environments**
 - `email` - Filtrar por email.
 - `pageNumber` - Número de página.
 - `pageSize` - Tamaño de página.
+
+## Documentación de la API (OpenAPI / Swagger)
+
+El proyecto incluye documentación interactiva de la API generada automáticamente con **springdoc-openapi**.
+
+### Acceso en tiempo de ejecución
+
+Con la aplicación arrancada, puedes acceder a:
+
+| Recurso | URL |
+|---------|-----|
+| **Swagger UI** | `http://localhost:8080/swagger-ui/index.html` |
+| **OpenAPI JSON** | `http://localhost:8080/v3/api-docs` |
+| **OpenAPI YAML** | `http://localhost:8080/v3/api-docs.yaml` |
+
+> **Nota:** Los endpoints de documentación son públicos (no requieren autenticación OAuth2). El resto de la API sí requiere un token JWT válido.
+
+### Generación del archivo YAML con Maven
+
+El proyecto está configurado con el `springdoc-openapi-maven-plugin` para generar un archivo `oa3.yaml` con la especificación OpenAPI de forma automática durante la fase `verify` de Maven:
+
+```bash
+mvn verify
+```
+
+O desde IntelliJ IDEA: abre el panel **Maven** (barra lateral derecha) > **biblioteca** > **Lifecycle** > doble clic en **verify**.
+
+Esto arranca la aplicación temporalmente, descarga la especificación desde `/v3/api-docs.yaml` y genera el archivo `oa3.yaml` en el directorio `target` del proyecto.
+
+> **Nota:** Para que la generación funcione, el Auth Server (`library-auth-server`) debe estar corriendo en el puerto 9000, ya que la aplicación necesita conectar con el issuer OAuth2 al arrancar.
+
 
 ## Ejemplos de Uso con Postman
 
