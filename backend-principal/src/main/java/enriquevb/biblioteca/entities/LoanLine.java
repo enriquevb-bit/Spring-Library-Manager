@@ -28,8 +28,9 @@ public class LoanLine {
     private Integer version;
 
     @NotNull
-    private Integer loanQuantity;
+    private Integer orderedQuantity;
 
+    private Integer returnedQuantity;
 
     // Relationships
 

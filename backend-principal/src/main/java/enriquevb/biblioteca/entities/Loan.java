@@ -46,6 +46,6 @@ public class Loan {
     @ManyToOne
     private Member member;
 
-    @OneToMany(mappedBy = "loan")
-    private Set<LoanLine> loan = new HashSet<>();
+    @OneToMany(mappedBy = "loan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<LoanLine> loanLines = new HashSet<>();
 }

@@ -1,14 +1,12 @@
 package enriquevb.biblioteca.models;
 
-import java.util.UUID;
-
-public class RequestedLoanItems<K, V> {
+public class RequestedLoanItems<UUID, Integer> {
     private UUID bookId;
     private Integer quantity;
 
-    public RequestedLoanItems(UUID bookId, Integer avalailableCopies) {
+    public RequestedLoanItems(UUID bookId, Integer availableCopies) {
         this.bookId = bookId;
-        this.quantity = avalailableCopies;
+        this.quantity = availableCopies;
     }
 
     public UUID getBookId() {

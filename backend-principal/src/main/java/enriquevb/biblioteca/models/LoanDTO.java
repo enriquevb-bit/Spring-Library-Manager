@@ -2,13 +2,21 @@ package enriquevb.biblioteca.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import enriquevb.biblioteca.entities.LoanLine;
+import enriquevb.biblioteca.entities.Member;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
+@Getter
+@Setter
 @JsonDeserialize(builder = LoanDTO.LoanDTOBuilder.class)
 @Builder
 @Data
@@ -32,4 +40,10 @@ public class LoanDTO {
 
     @JsonProperty("dueDate")
     private LocalDateTime dueDate;
+
+    @Builder.Default
+    @JsonProperty("loanLines")
+    private Set<LoanLineDTO> loanLines = new HashSet<>();
+
+    private MemberDTO member;
 }

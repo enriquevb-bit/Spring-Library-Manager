@@ -4,7 +4,10 @@ import enriquevb.biblioteca.controllers.NotFoundException;
 import enriquevb.biblioteca.entities.Book;
 import enriquevb.biblioteca.entities.Loan;
 import enriquevb.biblioteca.entities.LoanLine;
+import enriquevb.biblioteca.mappers.BookMapper;
+import enriquevb.biblioteca.mappers.LoanLineMapper;
 import enriquevb.biblioteca.mappers.LoanMapper;
+import enriquevb.biblioteca.mappers.MemberMapper;
 import enriquevb.biblioteca.models.*;
 import enriquevb.biblioteca.repositories.BookRepository;
 import enriquevb.biblioteca.repositories.LoanRepository;
@@ -15,12 +18,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -28,45 +30,63 @@ import java.util.concurrent.atomic.AtomicReference;
 @RequiredArgsConstructor
 public class LoanServiceJPA implements LoanService {
 
-    private final LoanRepository loanRepository;
-    private final LoanMapper loanMapper;
-
     private final MemberRepository memberRepository;
     private final BookRepository bookRepository;
+    private final LoanRepository loanRepository;
+
+    private final LoanLineMapper loanLineMapper;
+    private final LoanMapper loanMapper;
+    private final MemberMapper memberMapper;
+    private final BookMapper bookMapper;
 
     private static final int DEFAULT_PAGE = 0;
     private static final int DEFAULT_PAGE_SIZE = 25;
 
+    @Transactional
     @Override
     public LoanDTO createLoan(UUID memberId, List<RequestedLoanItems<UUID, Integer>> items) {
 
-        if (memberRepository.findById(memberId).get().getMemberState() == MemberState.ACTIVE){
+        MemberDTO requestedMember = memberMapper.memberToMemberDto(memberRepository.findById(memberId).orElseThrow(NotFoundException::new));
 
-            Loan loan = Loan.builder()
+        if (requestedMember.getMemberState() == MemberState.ACTIVE && !items.isEmpty()){
+
+            LoanDTO loanDTO = LoanDTO.builder()
                     .loanDate(LocalDateTime.now())
                     .loanState(LoanState.ACTIVE)
                     .build();
-            loan.setExpiringDate(loan.getLoanDate().plusDays(14));
+            loanDTO.setExpiringDate(loanDTO.getLoanDate().plusDays(14));
+            loanDTO.setMember(requestedMember);
+
+            Set<LoanLineDTO> loanLines = new HashSet<>();
 
             for (RequestedLoanItems<UUID, Integer> item : items){
                 UUID bookId = item.getBookId();
                 Integer quantity = item.getQuantity();
                 Book book = bookRepository.findById(bookId).orElseThrow(NotFoundException::new);
-
-                LoanLine loanLine;
+                BookDTO bookDTO = bookMapper.bookToBookDto(book);
 
                 if (book.getAvailableCopies() >= quantity) {
 
                     book.setAvailableCopies(book.getAvailableCopies() - quantity);
+                    bookRepository.save(book);
+
+                    LoanLineDTO loanLineDTO = LoanLineDTO.builder()
+                            .orderedQuantity(quantity)
+                            .build();
+                    loanLineDTO.setBook(bookDTO);
+                    loanLineDTO.setLoan(loanDTO);
+
+                    loanLines.add(loanLineDTO);
+                }else {
+                    //TODO
                 }
+
             }
-
-
-
-            //TODO
+            loanDTO.setLoanLines(loanLines);
+            return loanMapper.loanToLoanDto(loanRepository.save(loanMapper.loanDtoToLoan(loanDTO)));
         }
 
-
+        //TODO
         return null;
     }
 
