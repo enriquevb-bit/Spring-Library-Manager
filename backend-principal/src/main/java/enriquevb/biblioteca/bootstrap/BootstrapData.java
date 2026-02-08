@@ -2,6 +2,7 @@ package enriquevb.biblioteca.bootstrap;
 
 import enriquevb.biblioteca.entities.Author;
 import enriquevb.biblioteca.entities.Book;
+import enriquevb.biblioteca.entities.Genre;
 import enriquevb.biblioteca.entities.Member;
 import enriquevb.biblioteca.models.AuthorDTO;
 import enriquevb.biblioteca.models.BookDTO;
@@ -9,6 +10,7 @@ import enriquevb.biblioteca.models.MemberDTO;
 import enriquevb.biblioteca.models.MemberState;
 import enriquevb.biblioteca.repositories.AuthorRepository;
 import enriquevb.biblioteca.repositories.BookRepository;
+import enriquevb.biblioteca.repositories.GenreRepository;
 import enriquevb.biblioteca.repositories.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -26,6 +28,7 @@ public class BootstrapData implements CommandLineRunner {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final MemberRepository memberRepository;
+    private final GenreRepository genreRepository;
 
     @Transactional
     @Override
@@ -33,6 +36,30 @@ public class BootstrapData implements CommandLineRunner {
         loadBookData();
         loadAuthorData();
         loadMemberData();
+        loadGenreData();
+    }
+
+    private void loadGenreData() {
+        if ( genreRepository.count() == 0){
+            Genre genre1 = Genre.builder()
+                    .name("Fantasy")
+                    .description("Worlds of magic, mythical creatures, and epic quests")
+                    .build();
+
+            Genre genre2 = Genre.builder()
+                    .name("Science Fiction")
+                    .description("Futuristic technology, space exploration, and speculative science")
+                    .build();
+
+            Genre genre3 = Genre.builder()
+                    .name("Dystopian")
+                    .description("Oppressive societies, survival, and rebellion against authoritarian regimes")
+                    .build();
+
+            genreRepository.save(genre1);
+            genreRepository.save(genre2);
+            genreRepository.save(genre3);
+        }
     }
 
     private void loadMemberData() {

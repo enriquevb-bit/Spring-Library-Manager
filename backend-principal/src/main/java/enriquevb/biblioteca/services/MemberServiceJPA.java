@@ -75,14 +75,14 @@ public class MemberServiceJPA implements MemberService {
             queryPageNumber = DEFAULT_PAGE;
         }
 
-        if (pageSize == null) {
-            queryPageSize = DEFAULT_PAGE_SIZE;
-        } else {
-            if (pageSize > 1000) {
+        if (pageSize != null && pageSize > 0){
+            if (pageSize > 1000){
                 queryPageSize = 1000;
-            } else {
+            }else {
                 queryPageSize = pageSize;
             }
+        }else {
+            queryPageSize = DEFAULT_PAGE_SIZE;
         }
 
         Sort sort = Sort.by(Sort.Order.asc("name"));
