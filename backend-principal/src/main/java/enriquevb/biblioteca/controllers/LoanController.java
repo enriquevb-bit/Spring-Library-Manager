@@ -2,7 +2,9 @@ package enriquevb.biblioteca.controllers;
 
 import enriquevb.biblioteca.models.LoanDTO;
 import enriquevb.biblioteca.models.LoanState;
+import enriquevb.biblioteca.models.RequestedLoanItems;
 import enriquevb.biblioteca.services.LoanService;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -10,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -57,6 +60,18 @@ public class LoanController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", LOAN_PATH + "/" + savedLoan.getId().toString());
+
+        return new ResponseEntity(headers, HttpStatus.CREATED);
+    }
+
+    @PostMapping(MemberController.MEMBER_PATH_ID + "/loan")
+    public ResponseEntity createNewLoan(@PathVariable("memberId") UUID memberId,
+                                        @RequestBody List<RequestedLoanItems<UUID, Integer>> items){
+
+        LoanDTO loanDTO = loanService.createLoan(memberId, items);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", LOAN_PATH + "/" + loanDTO.getId().toString());
 
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }

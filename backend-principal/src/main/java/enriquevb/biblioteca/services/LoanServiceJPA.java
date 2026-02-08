@@ -1,5 +1,7 @@
 package enriquevb.biblioteca.services;
 
+import enriquevb.biblioteca.controllers.MemberNotActiveException;
+import enriquevb.biblioteca.controllers.NotEnoughCopiesException;
 import enriquevb.biblioteca.controllers.NotFoundException;
 import enriquevb.biblioteca.entities.Book;
 import enriquevb.biblioteca.entities.Loan;
@@ -78,16 +80,17 @@ public class LoanServiceJPA implements LoanService {
 
                     loanLines.add(loanLineDTO);
                 }else {
-                    //TODO
+
+                    throw new NotEnoughCopiesException();
                 }
 
             }
             loanDTO.setLoanLines(loanLines);
             return loanMapper.loanToLoanDto(loanRepository.save(loanMapper.loanDtoToLoan(loanDTO)));
-        }
+        }else {
 
-        //TODO
-        return null;
+            throw new MemberNotActiveException();
+        }
     }
 
     @Override
