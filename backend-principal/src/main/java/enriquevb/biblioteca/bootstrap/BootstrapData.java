@@ -1,17 +1,8 @@
 package enriquevb.biblioteca.bootstrap;
 
-import enriquevb.biblioteca.entities.Author;
-import enriquevb.biblioteca.entities.Book;
-import enriquevb.biblioteca.entities.Genre;
-import enriquevb.biblioteca.entities.Member;
-import enriquevb.biblioteca.models.AuthorDTO;
-import enriquevb.biblioteca.models.BookDTO;
-import enriquevb.biblioteca.models.MemberDTO;
-import enriquevb.biblioteca.models.MemberState;
-import enriquevb.biblioteca.repositories.AuthorRepository;
-import enriquevb.biblioteca.repositories.BookRepository;
-import enriquevb.biblioteca.repositories.GenreRepository;
-import enriquevb.biblioteca.repositories.MemberRepository;
+import enriquevb.biblioteca.entities.*;
+import enriquevb.biblioteca.models.*;
+import enriquevb.biblioteca.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -29,6 +20,7 @@ public class BootstrapData implements CommandLineRunner {
     private final AuthorRepository authorRepository;
     private final MemberRepository memberRepository;
     private final GenreRepository genreRepository;
+    private final LoanRepository loanRepository;
 
     @Transactional
     @Override
@@ -37,6 +29,34 @@ public class BootstrapData implements CommandLineRunner {
         loadAuthorData();
         loadMemberData();
         loadGenreData();
+        loadLoanData();
+    }
+
+    private void loadLoanData() {
+        if (loanRepository.count() == 0) {
+            Loan loan1 = Loan.builder()
+                    .loanState(LoanState.ACTIVE)
+                    .loanDate(LocalDateTime.now().minusDays(5))
+                    .expiringDate(LocalDateTime.now().plusDays(25))
+                    .build();
+
+            Loan loan2 = Loan.builder()
+                    .loanState(LoanState.RETURNED)
+                    .loanDate(LocalDateTime.now().minusDays(30))
+                    .expiringDate(LocalDateTime.now().minusDays(1))
+                    .dueDate(LocalDateTime.now().minusDays(3))
+                    .build();
+
+            Loan loan3 = Loan.builder()
+                    .loanState(LoanState.OVERDUE)
+                    .loanDate(LocalDateTime.now().minusDays(45))
+                    .expiringDate(LocalDateTime.now().minusDays(15))
+                    .build();
+
+            loanRepository.save(loan1);
+            loanRepository.save(loan2);
+            loanRepository.save(loan3);
+        }
     }
 
     private void loadGenreData() {
