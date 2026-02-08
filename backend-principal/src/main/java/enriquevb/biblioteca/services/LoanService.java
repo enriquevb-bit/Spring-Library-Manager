@@ -1,6 +1,5 @@
 package enriquevb.biblioteca.services;
 
-import enriquevb.biblioteca.entities.Loan;
 import enriquevb.biblioteca.models.LoanDTO;
 import enriquevb.biblioteca.models.LoanState;
 import enriquevb.biblioteca.models.RequestedLoanItems;
@@ -25,5 +24,7 @@ public interface LoanService {
     Optional<LoanDTO> patchLoanById(UUID id, LoanDTO loanDTO);
 
     LoanDTO createLoan(UUID memberId, List<RequestedLoanItems<UUID, Integer>> items);
+
+    LoanDTO returnLoan(UUID loanId);
 
 }

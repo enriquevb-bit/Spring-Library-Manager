@@ -59,6 +59,14 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
+    public LoanDTO returnLoan(UUID loanId) {
+
+        //TODO
+
+        return null;
+    }
+
+    @Override
     public Page<LoanDTO> listLoans(LoanState loanState, Integer pageNumber, Integer pageSize) {
         return new PageImpl<>(new ArrayList<>(loanMap.values()));
     }

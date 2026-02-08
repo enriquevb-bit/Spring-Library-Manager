@@ -1,11 +1,11 @@
 package enriquevb.biblioteca.services;
 
+import enriquevb.biblioteca.controllers.LoanAlreadyReturnedException;
 import enriquevb.biblioteca.controllers.MemberNotActiveException;
 import enriquevb.biblioteca.controllers.NotEnoughCopiesException;
 import enriquevb.biblioteca.controllers.NotFoundException;
 import enriquevb.biblioteca.entities.Book;
 import enriquevb.biblioteca.entities.Loan;
-import enriquevb.biblioteca.entities.LoanLine;
 import enriquevb.biblioteca.mappers.BookMapper;
 import enriquevb.biblioteca.mappers.LoanLineMapper;
 import enriquevb.biblioteca.mappers.LoanMapper;
@@ -46,6 +46,28 @@ public class LoanServiceJPA implements LoanService {
 
     @Transactional
     @Override
+    public LoanDTO returnLoan(UUID loanId) {
+
+        LoanDTO loanDTO = loanMapper.loanToLoanDto(loanRepository.findById(loanId).orElseThrow(NotFoundException::new));
+
+        if (loanDTO.getLoanState() != LoanState.ACTIVE) {
+            throw new LoanAlreadyReturnedException();
+        }
+
+        for (LoanLineDTO line : loanDTO.getLoanLines()) {
+            BookDTO book = line.getBook();
+            book.setAvailableCopies(book.getAvailableCopies() + line.getOrderedQuantity());
+            bookRepository.save(bookMapper.bookDtoToBook(book));
+        }
+
+        loanDTO.setLoanState(LoanState.RETURNED);
+        loanDTO.setDueDate(LocalDateTime.now());
+
+        return loanMapper.loanToLoanDto(loanRepository.save(loanMapper.loanDtoToLoan(loanDTO)));
+    }
+
+    @Transactional
+    @Override
     public LoanDTO createLoan(UUID memberId, List<RequestedLoanItems<UUID, Integer>> items) {
 
         MemberDTO requestedMember = memberMapper.memberToMemberDto(memberRepository.findById(memberId).orElseThrow(NotFoundException::new));
@@ -63,17 +85,17 @@ public class LoanServiceJPA implements LoanService {
 
             for (RequestedLoanItems<UUID, Integer> item : items){
                 UUID bookId = item.getBookId();
-                Integer quantity = item.getQuantity();
+                Integer orderedQuantity = item.getQuantity();
                 Book book = bookRepository.findById(bookId).orElseThrow(NotFoundException::new);
                 BookDTO bookDTO = bookMapper.bookToBookDto(book);
 
-                if (book.getAvailableCopies() >= quantity) {
+                if (book.getAvailableCopies() >= orderedQuantity) {
 
-                    book.setAvailableCopies(book.getAvailableCopies() - quantity);
+                    book.setAvailableCopies(book.getAvailableCopies() - orderedQuantity);
                     bookRepository.save(book);
 
                     LoanLineDTO loanLineDTO = LoanLineDTO.builder()
-                            .orderedQuantity(quantity)
+                            .orderedQuantity(orderedQuantity)
                             .build();
                     loanLineDTO.setBook(bookDTO);
                     loanLineDTO.setLoan(loanDTO);

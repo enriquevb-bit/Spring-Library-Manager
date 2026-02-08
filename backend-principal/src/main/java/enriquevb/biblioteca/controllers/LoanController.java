@@ -33,6 +33,14 @@ public class LoanController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PatchMapping(LOAN_PATH_ID + "/return")
+    public ResponseEntity returnLoan(@PathVariable("loanId") UUID loanId) {
+
+        loanService.returnLoan(loanId);
+
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
     @DeleteMapping(LOAN_PATH_ID)
     public ResponseEntity deleteLoanById(@PathVariable("loanId") UUID loanId) {
 
