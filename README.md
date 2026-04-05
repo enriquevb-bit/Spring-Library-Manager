@@ -3,11 +3,11 @@
 
 # Library Management System
 
-Library management system built with Spring Boot that allows managing books, authors, members and loans through a REST API, secured with OAuth2 and a custom authorization server.
+Library management system built with Spring Boot that allows managing books, authors, members,genres and loans through a REST API, secured with OAuth2 and a custom authorization server.
 
 ## Description
 
-This application is a complete backend system for managing a library. It supports CRUD operations (Create, Read, Update, Delete) on the main library entities: books, authors, members and loans.
+This application is a complete backend system for managing a library. It supports CRUD operations (Create, Read, Update, Delete) on the main library entities: books, authors, members, genres and loans. It also includes business logic for creating and returning loans with automatic inventory management.
 
 The project is split into two modules:
 
@@ -18,6 +18,7 @@ The project follows Spring Boot development best practices, including:
 - Layered architecture using Spring MVC.
 - DTOs for data transfer.
 - Input data validation.
+- Custom exceptions with meaningful HTTP status codes.
 - Paginated results.
 - Automatic entity-DTO mapping with MapStruct.
 - Database migrations with Flyway.
@@ -26,6 +27,7 @@ The project follows Spring Boot development best practices, including:
 - Integration tests with Testcontainers.
 - Optimistic Locking with @Version.
 - API documentation with OpenAPI 3 and Swagger UI.
+- Transactional business logic for loan operations.
 
 ## Technologies
 
@@ -253,6 +255,22 @@ Optionally, configure an environment variable under Postman's **Environments** s
 - `pageNumber` - Page number.
 - `pageSize` - Page size.
 
+### Genres
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/v1/genre` | List all genres (paginated). |
+| `GET` | `/api/v1/genre/{id}` | Get genre by ID. |
+| `POST` | `/api/v1/genre` | Create a new genre. |
+| `PUT` | `/api/v1/genre/{id}` | Full update of a genre. |
+| `PATCH` | `/api/v1/genre/{id}` | Partial update of a genre. |
+| `DELETE` | `/api/v1/genre/{id}` | Delete a genre. |
+
+**Query parameters for listing:**
+- `name` - Filter by name.
+- `pageNumber` - Page number.
+- `pageSize` - Page size.
+
 ### Members
 
 | Method | Endpoint | Description |
@@ -269,6 +287,87 @@ Optionally, configure an environment variable under Postman's **Environments** s
 - `email` - Filter by email.
 - `pageNumber` - Page number.
 - `pageSize` - Page size.
+
+### Loans
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/v1/loan` | List all loans (paginated). |
+| `GET` | `/api/v1/loan/{id}` | Get loan by ID. |
+| `POST` | `/api/v1/loan` | Create a new loan (basic CRUD). |
+| `PUT` | `/api/v1/loan/{id}` | Full update of a loan. |
+| `PATCH` | `/api/v1/loan/{id}` | Partial update of a loan. |
+| `DELETE` | `/api/v1/loan/{id}` | Delete a loan. |
+
+**Query parameters for listing:**
+- `loanState` - Filter by loan state (`ACTIVE`, `RETURNED`, `OVERDUE`, `CANCELLED`).
+- `pageNumber` - Page number.
+- `pageSize` - Page size.
+
+### Loan Business Logic
+
+These endpoints implement the core loan management business rules.
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/v1/member/{memberId}/loan` | Create a loan for a member with inventory validation. |
+| `PATCH` | `/api/v1/loan/{loanId}/return` | Return a loan and restore book copies. |
+
+#### Create Loan (`POST /api/v1/member/{memberId}/loan`)
+
+Creates a new loan for a specific member. This is a transactional operation that:
+
+1. Validates the member exists and is in `ACTIVE` state.
+2. Validates all requested books exist.
+3. Validates there are enough available copies for each book.
+4. Decrements `availableCopies` for each borrowed book.
+5. Creates the loan with state `ACTIVE`, `loanDate` set to now and `expiringDate` set to 14 days from now.
+
+**Request body:**
+```json
+[
+    {
+        "bookId": "uuid-of-book-1",
+        "quantity": 1
+    },
+    {
+        "bookId": "uuid-of-book-2",
+        "quantity": 2
+    }
+]
+```
+
+**Responses:**
+- `201 Created` - Loan created successfully (returns loan with Location header).
+- `400 Bad Request` - Member is not active (`MemberNotActiveException`).
+- `400 Bad Request` - Not enough copies available (`NotEnoughCopiesException`).
+- `404 Not Found` - Member or book not found (`NotFoundException`).
+
+#### Return Loan (`PATCH /api/v1/loan/{loanId}/return`)
+
+Returns a loan and restores book inventory. This is a transactional operation that:
+
+1. Validates the loan exists.
+2. Validates the loan is in `ACTIVE` state.
+3. Increments `availableCopies` for each book in the loan.
+4. Sets loan state to `RETURNED` and `dueDate` to the current timestamp.
+
+**Responses:**
+- `204 No Content` - Loan returned successfully.
+- `400 Bad Request` - Loan was already returned (`LoanAlreadyReturnedException`).
+- `404 Not Found` - Loan not found (`NotFoundException`).
+
+## Custom Exceptions
+
+The application uses custom exceptions with Spring's `@ResponseStatus` for meaningful error responses:
+
+| Exception | HTTP Status | Description |
+|-----------|-------------|-------------|
+| `NotFoundException` | `404 Not Found` | Requested resource does not exist. |
+| `NotEnoughCopiesException` | `400 Bad Request` | Not enough available copies of a book to fulfill the loan. |
+| `MemberNotActiveException` | `400 Bad Request` | Member is not in `ACTIVE` state and cannot borrow books. |
+| `LoanAlreadyReturnedException` | `400 Bad Request` | Loan has already been returned and cannot be returned again. |
+
 
 ## Postman Usage Examples
 
@@ -311,37 +410,6 @@ Optionally, configure an environment variable under Postman's **Environments** s
 | **URL** | `{{base_url}}/api/v1/book` |
 | **Params** | `title=Java`, `pageSize=10` |
 
-### Create an author
-
-| Setting | Value |
-|---------|-------|
-| **Method** | `POST` |
-| **URL** | `{{base_url}}/api/v1/author` |
-
-**Body (raw JSON):**
-```json
-{
-    "fullName": "Joshua Bloch",
-    "nationality": "American",
-    "birthDate": "1961-08-28"
-}
-```
-
-### Create a member
-
-| Setting | Value |
-|---------|-------|
-| **Method** | `POST` |
-| **URL** | `{{base_url}}/api/v1/member` |
-
-**Body (raw JSON):**
-```json
-{
-    "name": "Ana Martinez",
-    "email": "ana.martinez@email.com",
-    "memberState": "ACTIVE"
-}
-```
 
 ### Update a book (PUT)
 
@@ -367,6 +435,50 @@ Optionally, configure an environment variable under Postman's **Environments** s
 |---------|-------|
 | **Method** | `DELETE` |
 | **URL** | `{{base_url}}/api/v1/book/{id}` |
+
+### Create a member
+
+| Setting | Value |
+|---------|-------|
+| **Method** | `POST` |
+| **URL** | `{{base_url}}/api/v1/member` |
+
+**Body (raw JSON):**
+```json
+{
+    "name": "Ana Martinez",
+    "email": "ana.martinez@email.com",
+    "memberState": "ACTIVE"
+}
+```
+
+### Create a loan for a member (business logic)
+
+| Setting | Value |
+|---------|-------|
+| **Method** | `POST` |
+| **URL** | `{{base_url}}/api/v1/member/{memberId}/loan` |
+
+**Body (raw JSON):**
+```json
+[
+    {
+        "bookId": "uuid-of-book",
+        "quantity": 1
+    }
+]
+```
+
+> Replace `{memberId}` with the UUID of an `ACTIVE` member and `uuid-of-book` with a valid book UUID.
+
+### Return a loan
+
+| Setting | Value |
+|---------|-------|
+| **Method** | `PATCH` |
+| **URL** | `{{base_url}}/api/v1/loan/{loanId}/return` |
+
+> Replace `{loanId}` with the UUID of an `ACTIVE` loan. No request body required.
 
 ## Data Model
 
@@ -414,6 +526,14 @@ To view data directly in MySQL:
 | birthDate | LocalDate | Date of birth |
 | books | Set\<Book\> | Author's books |
 
+#### Genre
+| Field | Type | Description |
+|-------|------|-------------|
+| id | UUID | Unique identifier |
+| name | String | Genre name |
+| description | String | Genre description |
+| books | Set\<Book\> | Books in this genre (many-to-many) |
+
 #### Member
 | Field | Type | Description |
 |-------|------|-------------|
@@ -423,6 +543,17 @@ To view data directly in MySQL:
 | memberState | MemberState | Member status |
 | registerDate | LocalDateTime | Registration date |
 | loans | Set\<Loan\> | Member's loans |
+
+#### Loan
+| Field | Type | Description |
+|-------|------|-------------|
+| id | UUID | Unique identifier |
+| loanState | LoanState | Loan status |
+| loanDate | LocalDateTime | Date the loan was created |
+| expiringDate | LocalDateTime | Date the loan expires |
+| dueDate | LocalDateTime | Date the loan was returned |
+| member | Member | Member who borrowed (many-to-one) |
+| loanLines | Set\<LoanLine\> | Items in this loan (one-to-many, cascade delete) |
 
 ### Member States (MemberState)
 - `PENDING` - Registration pending verification
@@ -489,44 +620,7 @@ spring.application.name=library-auth-server
 server.port=9000
 ```
 
-## Project Structure
 
-```
-Spring-Library-Manager/
-├── backend-principal/
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/enriquevb/biblioteca/
-│   │   │   │   ├── BibliotecaApplication.java
-│   │   │   │   ├── bootstrap/
-│   │   │   │   ├── config/
-│   │   │   │   │   └── SpringSecConfig.java
-│   │   │   │   ├── controllers/
-│   │   │   │   ├── entities/
-│   │   │   │   ├── mappers/
-│   │   │   │   ├── models/
-│   │   │   │   ├── repositories/
-│   │   │   │   └── services/
-│   │   │   └── resources/
-│   │   │       ├── application.properties
-│   │   │       ├── application-localmysql.properties
-│   │   │       └── db/migration/
-│   │   └── test/
-│   ├── compose.yaml
-│   └── pom.xml
-├── library-auth-server/
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/enriquevb/libraryauthserver/
-│   │   │   │   ├── LibraryAuthServerApplication.java
-│   │   │   │   └── config/
-│   │   │   │       └── SecurityConfig.java
-│   │   │   └── resources/
-│   │   │       └── application.properties
-│   │   └── test/
-│   └── pom.xml
-└── README.md
-```
 
 ## Author
 
