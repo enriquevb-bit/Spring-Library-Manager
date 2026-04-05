@@ -4,7 +4,7 @@ import enriquevb.biblioteca.entities.LoanLine;
 import enriquevb.biblioteca.models.LoanLineDTO;
 import org.mapstruct.Mapper;
 
-@Mapper(uses = {BookMapper.class, LoanMapper.class})
+@Mapper(uses = {BookMapper.class})
 public interface LoanLineMapper {
 
     LoanLine loanLineDtoToLoanLine(LoanLineDTO loanLineDTO);
