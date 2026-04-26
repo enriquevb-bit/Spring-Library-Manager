@@ -13,6 +13,8 @@ public interface LoanService {
 
     Page<LoanDTO> listLoans(LoanState loanState, Integer pageNumber, Integer pageSize);
 
+    Page<LoanDTO> listLoansByMember(UUID memberId, LoanState loanState, Integer pageNumber, Integer pageSize);
+
     Optional<LoanDTO> getLoanById(UUID loanId);
 
     LoanDTO saveNewLoan(LoanDTO loanDTO);

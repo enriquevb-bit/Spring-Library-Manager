@@ -4,6 +4,7 @@ package enriquevb.biblioteca.controllers;
 import enriquevb.biblioteca.models.BookDTO;
 import enriquevb.biblioteca.models.GenreDTO;
 import enriquevb.biblioteca.services.GenreService;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -62,9 +63,9 @@ public class GenreController {
         return new ResponseEntity(header, HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping(GENRE_PATH)
     public Page<GenreDTO> listAllGenres(@RequestParam(required = false) String name,
-                                     @RequestParam(required = false) Integer pageNumber,
+                                     @RequestParam(required = false) @Parameter(description = "Page number, starting at 1") Integer pageNumber,
                                      @RequestParam(required = false) Integer pageSize){
 
         return genreService.listGenres(name, pageNumber, pageSize);

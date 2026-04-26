@@ -1,7 +1,11 @@
 package enriquevb.biblioteca.controllers;
 
+import enriquevb.biblioteca.models.LoanDTO;
+import enriquevb.biblioteca.models.LoanState;
 import enriquevb.biblioteca.models.MemberDTO;
+import enriquevb.biblioteca.services.LoanService;
 import enriquevb.biblioteca.services.MemberService;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +23,7 @@ public class MemberController {
     public static final String MEMBER_PATH_ID = MEMBER_PATH + "/{memberId}";
 
     private final MemberService memberService;
+    private final LoanService loanService;
 
     @PatchMapping(MEMBER_PATH_ID)
     public ResponseEntity patchMemberById(@PathVariable("memberId") UUID memberId,
@@ -63,7 +68,7 @@ public class MemberController {
     @GetMapping(MEMBER_PATH)
     public Page<MemberDTO> listMembers(@RequestParam(required = false) String name,
                                           @RequestParam(required = false) String email,
-                                          @RequestParam(required = false) Integer pageNumber,
+                                          @RequestParam(required = false) @Parameter(description = "Page number, starting at 1") Integer pageNumber,
                                           @RequestParam(required = false) Integer pageSize) {
         return memberService.listMembers(name, email, pageNumber, pageSize);
     }
@@ -71,5 +76,13 @@ public class MemberController {
     @GetMapping(value = MEMBER_PATH_ID)
     public MemberDTO getMemberById(@PathVariable("memberId") UUID id) {
         return memberService.getMemberById(id).orElseThrow(NotFoundException::new);
+    }
+
+    @GetMapping(MEMBER_PATH_ID + "/loan")
+    public Page<LoanDTO> listMemberLoans(@PathVariable("memberId") UUID memberId,
+                                         @RequestParam(required = false) LoanState loanState,
+                                         @RequestParam(required = false) @Parameter(description = "Page number, starting at 1") Integer pageNumber,
+                                         @RequestParam(required = false) Integer pageSize) {
+        return loanService.listLoansByMember(memberId, loanState, pageNumber, pageSize);
     }
 }

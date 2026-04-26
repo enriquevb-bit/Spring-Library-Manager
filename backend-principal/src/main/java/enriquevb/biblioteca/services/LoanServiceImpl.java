@@ -72,6 +72,11 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
+    public Page<LoanDTO> listLoansByMember(UUID memberId, LoanState loanState, Integer pageNumber, Integer pageSize) {
+        return new PageImpl<>(new ArrayList<>(loanMap.values()));
+    }
+
+    @Override
     public Optional<LoanDTO> getLoanById(UUID loanId) {
         return Optional.ofNullable(loanMap.get(loanId));
     }

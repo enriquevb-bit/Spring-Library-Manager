@@ -2,6 +2,7 @@ package enriquevb.biblioteca.controllers;
 
 import enriquevb.biblioteca.models.BookDTO;
 import enriquevb.biblioteca.services.BookService;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -65,7 +66,7 @@ public class BookController {
     @GetMapping(value = BOOK_PATH)
     public Page<BookDTO> listBooks(@RequestParam(required = false) String title,
                                    @RequestParam(required = false) String isbn,
-                                   @RequestParam(required = false) Integer pageNumber,
+                                   @RequestParam(required = false) @Parameter(description = "Page number, starting at 1") Integer pageNumber,
                                    @RequestParam(required = false) Integer pageSize){
         return bookService.listBooks(title, isbn, pageNumber, pageSize);
     }

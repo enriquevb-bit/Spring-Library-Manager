@@ -12,4 +12,8 @@ import java.util.UUID;
 public interface LoanRepository extends JpaRepository<Loan, UUID> {
 
     Page<Loan> findAllByLoanState(LoanState loanState, Pageable pageable);
+
+    Page<Loan> findAllByMemberId(UUID memberId, Pageable pageable);
+
+    Page<Loan> findAllByMemberIdAndLoanState(UUID memberId, LoanState loanState, Pageable pageable);
 }

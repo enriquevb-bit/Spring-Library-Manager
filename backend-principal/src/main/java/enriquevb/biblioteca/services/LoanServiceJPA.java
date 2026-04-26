@@ -136,6 +136,21 @@ public class LoanServiceJPA implements LoanService {
         return loanPage.map(loanMapper::loanToLoanDto);
     }
 
+    @Override
+    public Page<LoanDTO> listLoansByMember(UUID memberId, LoanState loanState, Integer pageNumber, Integer pageSize) {
+        PageRequest pageRequest = buildPageRequest(pageNumber, pageSize);
+
+        Page<Loan> loanPage;
+
+        if (loanState != null) {
+            loanPage = loanRepository.findAllByMemberIdAndLoanState(memberId, loanState, pageRequest);
+        } else {
+            loanPage = loanRepository.findAllByMemberId(memberId, pageRequest);
+        }
+
+        return loanPage.map(loanMapper::loanToLoanDto);
+    }
+
     private PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
         int queryPageNumber;
         int queryPageSize;

@@ -10,6 +10,8 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @JsonDeserialize(builder = BookDTO.BookDTOBuilder.class)
@@ -46,4 +48,12 @@ public class BookDTO {
 
     @JsonProperty("lastModifiedDate")
     private LocalDateTime lastModifiedDate;
+
+    @Builder.Default
+    @JsonProperty("authors")
+    private Set<AuthorDTO> authors = new HashSet<>();
+
+    @Builder.Default
+    @JsonProperty("genres")
+    private Set<GenreDTO> genres = new HashSet<>();
 }

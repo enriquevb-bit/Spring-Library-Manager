@@ -4,6 +4,7 @@ import enriquevb.biblioteca.models.LoanDTO;
 import enriquevb.biblioteca.models.LoanState;
 import enriquevb.biblioteca.models.RequestedLoanItems;
 import enriquevb.biblioteca.services.LoanService;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -86,7 +87,7 @@ public class LoanController {
 
     @GetMapping(LOAN_PATH)
     public Page<LoanDTO> listLoans(@RequestParam(required = false) LoanState loanState,
-                                   @RequestParam(required = false) Integer pageNumber,
+                                   @RequestParam(required = false) @Parameter(description = "Page number, starting at 1") Integer pageNumber,
                                    @RequestParam(required = false) Integer pageSize) {
         return loanService.listLoans(loanState, pageNumber, pageSize);
     }
