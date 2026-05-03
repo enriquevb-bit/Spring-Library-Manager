@@ -1,5 +1,6 @@
 package enriquevb.biblioteca.services;
 
+import enriquevb.biblioteca.controllers.EmptyLoanRequestException;
 import enriquevb.biblioteca.controllers.LoanAlreadyReturnedException;
 import enriquevb.biblioteca.controllers.MemberNotActiveException;
 import enriquevb.biblioteca.controllers.NotEnoughCopiesException;
@@ -70,49 +71,48 @@ public class LoanServiceJPA implements LoanService {
     @Override
     public LoanDTO createLoan(UUID memberId, List<RequestedLoanItems<UUID, Integer>> items) {
 
-        MemberDTO requestedMember = memberMapper.memberToMemberDto(memberRepository.findById(memberId).orElseThrow(NotFoundException::new));
+        MemberDTO requestedMember = memberMapper.memberToMemberDto(
+                memberRepository.findById(memberId).orElseThrow(NotFoundException::new));
 
-        if (requestedMember.getMemberState() == MemberState.ACTIVE && !items.isEmpty()){
-
-            LoanDTO loanDTO = LoanDTO.builder()
-                    .loanDate(LocalDateTime.now())
-                    .loanState(LoanState.ACTIVE)
-                    .build();
-            loanDTO.setExpiringDate(loanDTO.getLoanDate().plusDays(14));
-            loanDTO.setMember(requestedMember);
-
-            Set<LoanLineDTO> loanLines = new HashSet<>();
-
-            for (RequestedLoanItems<UUID, Integer> item : items){
-                UUID bookId = item.getBookId();
-                Integer orderedQuantity = item.getQuantity();
-                Book book = bookRepository.findById(bookId).orElseThrow(NotFoundException::new);
-                BookDTO bookDTO = bookMapper.bookToBookDto(book);
-
-                if (book.getAvailableCopies() >= orderedQuantity) {
-
-                    book.setAvailableCopies(book.getAvailableCopies() - orderedQuantity);
-                    bookRepository.save(book);
-
-                    LoanLineDTO loanLineDTO = LoanLineDTO.builder()
-                            .orderedQuantity(orderedQuantity)
-                            .build();
-                    loanLineDTO.setBook(bookDTO);
-                    loanLineDTO.setLoan(loanDTO);
-
-                    loanLines.add(loanLineDTO);
-                }else {
-
-                    throw new NotEnoughCopiesException();
-                }
-
-            }
-            loanDTO.setLoanLines(loanLines);
-            return loanMapper.loanToLoanDto(loanRepository.save(loanMapper.loanDtoToLoan(loanDTO)));
-        }else {
-
+        if (requestedMember.getMemberState() != MemberState.ACTIVE) {
             throw new MemberNotActiveException();
         }
+        if (items.isEmpty()) {
+            throw new EmptyLoanRequestException();
+        }
+
+        LoanDTO loanDTO = LoanDTO.builder()
+                .loanDate(LocalDateTime.now())
+                .loanState(LoanState.ACTIVE)
+                .build();
+        loanDTO.setExpiringDate(loanDTO.getLoanDate().plusDays(14));
+        loanDTO.setMember(requestedMember);
+
+        Set<LoanLineDTO> loanLines = new HashSet<>();
+
+        for (RequestedLoanItems<UUID, Integer> item : items) {
+            UUID bookId = item.getBookId();
+            Integer orderedQuantity = item.getQuantity();
+            Book book = bookRepository.findById(bookId).orElseThrow(NotFoundException::new);
+            BookDTO bookDTO = bookMapper.bookToBookDto(book);
+
+            if (book.getAvailableCopies() < orderedQuantity) {
+                throw new NotEnoughCopiesException();
+            }
+
+            book.setAvailableCopies(book.getAvailableCopies() - orderedQuantity);
+            bookRepository.save(book);
+
+            LoanLineDTO loanLineDTO = LoanLineDTO.builder()
+                    .orderedQuantity(orderedQuantity)
+                    .build();
+            loanLineDTO.setBook(bookDTO);
+            loanLineDTO.setLoan(loanDTO);
+
+            loanLines.add(loanLineDTO);
+        }
+        loanDTO.setLoanLines(loanLines);
+        return loanMapper.loanToLoanDto(loanRepository.save(loanMapper.loanDtoToLoan(loanDTO)));
     }
 
     @Override
