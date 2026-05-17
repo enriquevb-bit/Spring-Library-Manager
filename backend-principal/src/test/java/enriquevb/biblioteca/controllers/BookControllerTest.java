@@ -15,6 +15,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -23,6 +24,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -60,14 +62,17 @@ class BookControllerTest {
     ArgumentCaptor<BookDTO> beerArgumentCaptor;
 
     public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor =
-            jwt().jwt(jwt -> {
-                jwt.claims(claims -> {
-                            claims.put("scope", "openid");
-                            claims.put("scope", "profile");
-                        })
-                        .subject("oidc-client")
-                        .notBefore(Instant.now().minusSeconds(5));
-            });
+            jwt()
+                    .jwt(jwt -> {
+                        jwt.claims(claims -> {
+                                    claims.put("scope", "openid");
+                                    claims.put("scope", "profile");
+                                    claims.put("authorities", List.of("ROLE_ADMIN"));
+                                })
+                                .subject("oidc-client")
+                                .notBefore(Instant.now().minusSeconds(5));
+                    })
+                    .authorities(new SimpleGrantedAuthority("ROLE_ADMIN"));
 
     @BeforeEach
     void setUp() {

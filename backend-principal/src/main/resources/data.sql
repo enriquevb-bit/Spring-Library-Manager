@@ -125,7 +125,7 @@ INSERT INTO genres_books (book_id, genre_id) VALUES ('b0000025-0000-0000-0000-00
 -- =====================================================
 -- MIEMBROS (10)
 -- =====================================================
-INSERT INTO member (id, version, name, email, member_state, register_date) VALUES ('d0000001-0000-0000-0000-000000000001', 0, 'María López García', 'maria.lopez@email.com', 'ACTIVE', '2025-09-01 09:00:00');
+INSERT INTO member (id, version, name, email, member_state, register_date) VALUES ('d0000001-0000-0000-0000-000000000001', 0, 'María López García', 'miembro@gmail.com', 'ACTIVE', '2025-09-01 09:00:00');
 INSERT INTO member (id, version, name, email, member_state, register_date) VALUES ('d0000002-0000-0000-0000-000000000002', 0, 'Carlos Fernández Ruiz', 'carlos.fernandez@email.com', 'ACTIVE', '2025-09-15 10:30:00');
 INSERT INTO member (id, version, name, email, member_state, register_date) VALUES ('d0000003-0000-0000-0000-000000000003', 0, 'Ana Martínez Díaz', 'ana.martinez@email.com', 'ACTIVE', '2025-10-01 11:00:00');
 INSERT INTO member (id, version, name, email, member_state, register_date) VALUES ('d0000004-0000-0000-0000-000000000004', 0, 'Pedro Sánchez Morales', 'pedro.sanchez@email.com', 'PENDING', '2026-03-20 14:00:00');

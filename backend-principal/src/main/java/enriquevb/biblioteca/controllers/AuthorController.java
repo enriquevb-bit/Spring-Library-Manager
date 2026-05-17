@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -21,6 +22,7 @@ public class AuthorController {
 
     private final AuthorService authorService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(AUTHOR_PATH_ID)
     public ResponseEntity patchAuthorById(@PathVariable("authorId") UUID authorId,
                                           @RequestBody AuthorDTO author) {
@@ -30,6 +32,7 @@ public class AuthorController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(AUTHOR_PATH_ID)
     public ResponseEntity deleteAuthorById(@PathVariable("authorId") UUID authorId) {
 
@@ -40,6 +43,7 @@ public class AuthorController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(AUTHOR_PATH_ID)
     public ResponseEntity updateAuthorById(@PathVariable("authorId") UUID authorId,
                                            @RequestBody AuthorDTO author) {
@@ -51,6 +55,7 @@ public class AuthorController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(AUTHOR_PATH)
     public ResponseEntity handlePost(@RequestBody AuthorDTO author) {
         AuthorDTO savedAuthor = authorService.saveNewAuthor(author);
@@ -61,6 +66,7 @@ public class AuthorController {
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MEMBER')")
     @GetMapping(AUTHOR_PATH)
     public Page<AuthorDTO> listAuthors(@RequestParam(required = false) String fullName,
                                        @RequestParam(required = false) String nationality,
@@ -69,6 +75,7 @@ public class AuthorController {
         return authorService.listAuthors(fullName, nationality, pageNumber, pageSize);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MEMBER')")
     @GetMapping(value = AUTHOR_PATH_ID)
     public AuthorDTO getAuthorById(@PathVariable("authorId") UUID id) {
         return authorService.getAuthorById(id).orElseThrow(NotFoundException::new);

@@ -97,7 +97,7 @@ public class BootstrapData implements CommandLineRunner {
 
         Member member1 = Member.builder()
                 .name("Juan Pérez")
-                .email("juan.perez@example.com")
+                .email("miembro@gmail.com")
                 .memberState(MemberState.ACTIVE)
                 .build();
 

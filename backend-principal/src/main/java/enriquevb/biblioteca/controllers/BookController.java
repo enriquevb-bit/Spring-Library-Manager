@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,7 @@ public class BookController {
 
     private final BookService bookService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(BOOK_PATH_ID)
     public ResponseEntity patchBookById(@PathVariable("bookId") UUID bookId, @RequestBody BookDTO book){
 
@@ -32,6 +34,7 @@ public class BookController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(BOOK_PATH_ID)
     public ResponseEntity deleteById(@PathVariable("bookId") UUID bookId){
 
@@ -42,6 +45,7 @@ public class BookController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(BOOK_PATH_ID)
     public ResponseEntity updateById(@PathVariable("bookId") UUID bookId, @Validated @RequestBody BookDTO book){
 
@@ -52,6 +56,7 @@ public class BookController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(BOOK_PATH)
     public ResponseEntity handlePost(@Validated @RequestBody BookDTO book){
 
@@ -63,6 +68,7 @@ public class BookController {
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MEMBER')")
     @GetMapping(value = BOOK_PATH)
     public Page<BookDTO> listBooks(@RequestParam(required = false) String title,
                                    @RequestParam(required = false) String isbn,
@@ -71,6 +77,7 @@ public class BookController {
         return bookService.listBooks(title, isbn, pageNumber, pageSize);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MEMBER')")
     @GetMapping(value = BOOK_PATH_ID)
     public BookDTO getBookById(@PathVariable("bookId") UUID bookId){
 

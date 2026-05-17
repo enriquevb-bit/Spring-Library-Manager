@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,7 @@ public class GenreController {
 
     private final GenreService genreService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(GENRE_PATH_ID)
     public ResponseEntity patchBookById(@PathVariable("genreId") UUID id, @RequestBody GenreDTO genreDTO){
 
@@ -32,6 +34,7 @@ public class GenreController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(GENRE_PATH_ID)
     public ResponseEntity deleteById(@PathVariable("genreId") UUID id){
 
@@ -42,6 +45,7 @@ public class GenreController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(GENRE_PATH_ID)
     public ResponseEntity updateById(@PathVariable("genreId") UUID id, @Validated @RequestBody GenreDTO genre){
 
@@ -52,6 +56,7 @@ public class GenreController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(GENRE_PATH)
     public ResponseEntity handlePost(@Validated @RequestBody GenreDTO genreDTO){
 
@@ -63,6 +68,7 @@ public class GenreController {
         return new ResponseEntity(header, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MEMBER')")
     @GetMapping(GENRE_PATH)
     public Page<GenreDTO> listAllGenres(@RequestParam(required = false) String name,
                                      @RequestParam(required = false) @Parameter(description = "Page number, starting at 1") Integer pageNumber,
@@ -71,6 +77,7 @@ public class GenreController {
         return genreService.listGenres(name, pageNumber, pageSize);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MEMBER')")
     @GetMapping(GENRE_PATH_ID)
     public GenreDTO getGenreById(@PathVariable("genreId")UUID id){
 

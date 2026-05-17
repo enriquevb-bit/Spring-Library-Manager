@@ -2,6 +2,7 @@ package enriquevb.biblioteca.controllers;
 
 import enriquevb.biblioteca.config.SpringSecConfig;
 import enriquevb.biblioteca.models.MemberDTO;
+import enriquevb.biblioteca.services.LoanService;
 import enriquevb.biblioteca.services.MemberService;
 import enriquevb.biblioteca.services.MemberServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +42,9 @@ class MemberControllerTest {
 
     @MockitoBean
     MemberService memberService;
+
+    @MockitoBean
+    LoanService loanService;
 
     MemberServiceImpl memberServiceImpl;
 

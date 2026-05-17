@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @Import(BootstrapData.class)
+@TestPropertySource(properties = "spring.sql.init.mode=never")
 class MemberRepositoryTest {
 
     @Autowired

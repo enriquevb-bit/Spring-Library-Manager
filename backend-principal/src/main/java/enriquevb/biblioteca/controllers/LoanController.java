@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class LoanController {
 
     private final LoanService loanService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(LOAN_PATH_ID)
     public ResponseEntity patchLoanById(@PathVariable("loanId") UUID loanId,
                                         @RequestBody LoanDTO loan) {
@@ -34,6 +36,7 @@ public class LoanController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(LOAN_PATH_ID + "/return")
     public ResponseEntity returnLoan(@PathVariable("loanId") UUID loanId) {
 
@@ -42,6 +45,7 @@ public class LoanController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(LOAN_PATH_ID)
     public ResponseEntity deleteLoanById(@PathVariable("loanId") UUID loanId) {
 
@@ -52,6 +56,7 @@ public class LoanController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(LOAN_PATH_ID)
     public ResponseEntity updateLoanById(@PathVariable("loanId") UUID loanId,
                                          @RequestBody LoanDTO loan) {
@@ -63,6 +68,7 @@ public class LoanController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(LOAN_PATH)
     public ResponseEntity handlePost(@RequestBody LoanDTO loan) {
         LoanDTO savedLoan = loanService.saveNewLoan(loan);
@@ -73,6 +79,7 @@ public class LoanController {
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(MemberController.MEMBER_PATH_ID + "/loan")
     public ResponseEntity createNewLoan(@PathVariable("memberId") UUID memberId,
                                         @RequestBody List<RequestedLoanItems<UUID, Integer>> items){
@@ -85,6 +92,7 @@ public class LoanController {
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(LOAN_PATH)
     public Page<LoanDTO> listLoans(@RequestParam(required = false) LoanState loanState,
                                    @RequestParam(required = false) @Parameter(description = "Page number, starting at 1") Integer pageNumber,
@@ -92,6 +100,7 @@ public class LoanController {
         return loanService.listLoans(loanState, pageNumber, pageSize);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value = LOAN_PATH_ID)
     public LoanDTO getLoanById(@PathVariable("loanId") UUID loanId) {
         return loanService.getLoanById(loanId).orElseThrow(NotFoundException::new);

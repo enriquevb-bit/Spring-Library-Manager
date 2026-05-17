@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -25,6 +26,7 @@ public class MemberController {
     private final MemberService memberService;
     private final LoanService loanService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(MEMBER_PATH_ID)
     public ResponseEntity patchMemberById(@PathVariable("memberId") UUID memberId,
                                           @RequestBody MemberDTO member) {
@@ -34,6 +36,7 @@ public class MemberController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(MEMBER_PATH_ID)
     public ResponseEntity deleteMemberById(@PathVariable("memberId") UUID memberId) {
 
@@ -44,6 +47,7 @@ public class MemberController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(MEMBER_PATH_ID)
     public ResponseEntity updateMemberById(@PathVariable("memberId") UUID memberId,
                                            @RequestBody MemberDTO member) {
@@ -55,6 +59,7 @@ public class MemberController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(MEMBER_PATH)
     public ResponseEntity handlePost(@RequestBody MemberDTO member) {
         MemberDTO savedMember = memberService.saveNewMember(member);
@@ -65,6 +70,7 @@ public class MemberController {
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(MEMBER_PATH)
     public Page<MemberDTO> listMembers(@RequestParam(required = false) String name,
                                           @RequestParam(required = false) String email,
@@ -73,11 +79,13 @@ public class MemberController {
         return memberService.listMembers(name, email, pageNumber, pageSize);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value = MEMBER_PATH_ID)
     public MemberDTO getMemberById(@PathVariable("memberId") UUID id) {
         return memberService.getMemberById(id).orElseThrow(NotFoundException::new);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(MEMBER_PATH_ID + "/loan")
     public Page<LoanDTO> listMemberLoans(@PathVariable("memberId") UUID memberId,
                                          @RequestParam(required = false) LoanState loanState,

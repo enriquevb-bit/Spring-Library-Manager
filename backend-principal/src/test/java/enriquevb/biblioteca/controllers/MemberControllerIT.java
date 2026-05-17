@@ -3,6 +3,7 @@ package enriquevb.biblioteca.controllers;
 import enriquevb.biblioteca.entities.Member;
 import enriquevb.biblioteca.mappers.MemberMapper;
 import enriquevb.biblioteca.models.MemberDTO;
+import enriquevb.biblioteca.repositories.LoanRepository;
 import enriquevb.biblioteca.repositories.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +39,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@WithMockUser(roles = "ADMIN")
+@TestPropertySource(properties = "spring.sql.init.mode=never")
 class MemberControllerIT {
 
     @Autowired
@@ -43,6 +48,9 @@ class MemberControllerIT {
 
     @Autowired
     MemberRepository memberRepository;
+
+    @Autowired
+    LoanRepository loanRepository;
 
     @Autowired
     MemberMapper memberMapper;
@@ -207,6 +215,7 @@ class MemberControllerIT {
     @Transactional
     @Test
     void testEmptyList() {
+        loanRepository.deleteAll();
         memberRepository.deleteAll();
         Page<MemberDTO> emptyList = memberController.listMembers(null, null, 1, 50);
 

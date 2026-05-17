@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
+import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
 
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 @Import(BootstrapData.class)
+@TestPropertySource(properties = "spring.sql.init.mode=never")
 class AuthorRepositoryTest {
 
     @Autowired

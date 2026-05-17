@@ -5,6 +5,7 @@ import enriquevb.biblioteca.entities.Book;
 import enriquevb.biblioteca.mappers.BookMapper;
 import enriquevb.biblioteca.models.BookDTO;
 import enriquevb.biblioteca.repositories.BookRepository;
+import enriquevb.biblioteca.repositories.LoanRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +41,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@WithMockUser(roles = "ADMIN")
+@TestPropertySource(properties = "spring.sql.init.mode=never")
 class BookControllerIT {
 
     @Autowired
@@ -45,6 +50,9 @@ class BookControllerIT {
 
     @Autowired
     BookRepository bookRepository;
+
+    @Autowired
+    LoanRepository loanRepository;
 
     @Autowired
     BookMapper bookMapper;
@@ -190,6 +198,7 @@ class BookControllerIT {
         assertThrows(NotFoundException.class, () -> bookController.getBookById(UUID.randomUUID()));
     }
 
+    @Transactional
     @Test
     void testGetById() {
         BookDTO bookDTO = bookController.listBooks(null, null, 1, 50).getContent().get(0);
@@ -197,6 +206,7 @@ class BookControllerIT {
         assertThat(bookController.getBookById(bookDTO.getId())).isNotNull();
     }
 
+    @Transactional
     @Test
     void testListBooks() {
         Page<BookDTO> books = bookController.listBooks(null, null, 1, 50);
@@ -209,6 +219,7 @@ class BookControllerIT {
     @Transactional
     @Test
     void testEmptyList() {
+        loanRepository.deleteAll();
         bookRepository.deleteAll();
         Page<BookDTO> emptyList = bookController.listBooks(null, null, 1, 50);
 
