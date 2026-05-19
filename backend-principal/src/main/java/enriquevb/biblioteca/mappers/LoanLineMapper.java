@@ -8,6 +8,7 @@ import org.mapstruct.Mapping;
 @Mapper(uses = {BookMapper.class})
 public interface LoanLineMapper {
 
+    @Mapping(target = "loan", ignore = true)
     LoanLine loanLineDtoToLoanLine(LoanLineDTO loanLineDTO);
 
     @Mapping(target = "loan", ignore = true)
