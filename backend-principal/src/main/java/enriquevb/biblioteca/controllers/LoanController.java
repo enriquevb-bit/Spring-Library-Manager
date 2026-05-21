@@ -46,6 +46,15 @@ public class LoanController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping(LOAN_PATH_ID + "/activate")
+    public ResponseEntity activateLoan(@PathVariable("loanId") UUID loanId) {
+
+        loanService.activateLoan(loanId);
+
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(LOAN_PATH_ID)
     public ResponseEntity deleteLoanById(@PathVariable("loanId") UUID loanId) {
 

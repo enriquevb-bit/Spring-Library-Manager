@@ -18,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,11 +56,23 @@ public class MeController {
     }
 
     @PreAuthorize("hasRole('MEMBER')")
+    @GetMapping("/loan/{loanId}")
+    public LoanDTO getCurrentMemberLoanById(@AuthenticationPrincipal Jwt jwt,
+                                            @PathVariable("loanId") UUID loanId) {
+        Member member = findMemberFromJwt(jwt);
+        LoanDTO loan = loanService.getLoanById(loanId).orElseThrow(NotFoundException::new);
+        if (loan.getMember() == null || !member.getId().equals(loan.getMember().getId())) {
+            throw new NotFoundException();
+        }
+        return loan;
+    }
+
+    @PreAuthorize("hasRole('MEMBER')")
     @PostMapping("/loan")
     public ResponseEntity reserveLoan(@AuthenticationPrincipal Jwt jwt,
                                       @RequestBody List<RequestedLoanItems<UUID, Integer>> items) {
         Member member = findMemberFromJwt(jwt);
-        LoanDTO loanDTO = loanService.createLoan(member.getId(), items);
+        LoanDTO loanDTO = loanService.reserveLoan(member.getId(), items);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", LoanController.LOAN_PATH + "/" + loanDTO.getId().toString());

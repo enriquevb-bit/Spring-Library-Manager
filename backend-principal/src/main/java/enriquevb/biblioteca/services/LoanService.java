@@ -27,6 +27,10 @@ public interface LoanService {
 
     LoanDTO createLoan(UUID memberId, List<RequestedLoanItems<UUID, Integer>> items);
 
+    LoanDTO reserveLoan(UUID memberId, List<RequestedLoanItems<UUID, Integer>> items);
+
+    LoanDTO activateLoan(UUID loanId);
+
     LoanDTO returnLoan(UUID loanId);
 
 }

@@ -1,5 +1,5 @@
 package enriquevb.biblioteca.models;
 
 public enum LoanState {
-    ACTIVE, RETURNED, OVERDUE, CANCELLED
+    RESERVED, ACTIVE, RETURNED, OVERDUE, CANCELLED
 }

@@ -59,6 +59,22 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
+    public LoanDTO reserveLoan(UUID memberId, List<RequestedLoanItems<UUID, Integer>> items) {
+
+        //TODO
+
+        return null;
+    }
+
+    @Override
+    public LoanDTO activateLoan(UUID loanId) {
+
+        //TODO
+
+        return null;
+    }
+
+    @Override
     public LoanDTO returnLoan(UUID loanId) {
 
         //TODO

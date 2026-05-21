@@ -2,6 +2,7 @@ package enriquevb.biblioteca.services;
 
 import enriquevb.biblioteca.controllers.EmptyLoanRequestException;
 import enriquevb.biblioteca.controllers.LoanAlreadyReturnedException;
+import enriquevb.biblioteca.controllers.LoanNotReservedException;
 import enriquevb.biblioteca.controllers.MemberNotActiveException;
 import enriquevb.biblioteca.controllers.NotEnoughCopiesException;
 import enriquevb.biblioteca.controllers.NotFoundException;
@@ -70,6 +71,35 @@ public class LoanServiceJPA implements LoanService {
     @Transactional
     @Override
     public LoanDTO createLoan(UUID memberId, List<RequestedLoanItems<UUID, Integer>> items) {
+        return createLoanWithState(memberId, items, LoanState.ACTIVE);
+    }
+
+    @Transactional
+    @Override
+    public LoanDTO reserveLoan(UUID memberId, List<RequestedLoanItems<UUID, Integer>> items) {
+        return createLoanWithState(memberId, items, LoanState.RESERVED);
+    }
+
+    @Transactional
+    @Override
+    public LoanDTO activateLoan(UUID loanId) {
+        Loan loan = loanRepository.findById(loanId).orElseThrow(NotFoundException::new);
+
+        if (loan.getLoanState() != LoanState.RESERVED) {
+            throw new LoanNotReservedException();
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        loan.setLoanState(LoanState.ACTIVE);
+        loan.setLoanDate(now);
+        loan.setExpiringDate(now.plusDays(14));
+
+        return loanMapper.loanToLoanDto(loanRepository.save(loan));
+    }
+
+    private LoanDTO createLoanWithState(UUID memberId,
+                                         List<RequestedLoanItems<UUID, Integer>> items,
+                                         LoanState initialState) {
 
         MemberDTO requestedMember = memberMapper.memberToMemberDto(
                 memberRepository.findById(memberId).orElseThrow(NotFoundException::new));
@@ -83,7 +113,7 @@ public class LoanServiceJPA implements LoanService {
 
         LoanDTO loanDTO = LoanDTO.builder()
                 .loanDate(LocalDateTime.now())
-                .loanState(LoanState.ACTIVE)
+                .loanState(initialState)
                 .build();
         loanDTO.setExpiringDate(loanDTO.getLoanDate().plusDays(14));
         loanDTO.setMember(requestedMember);
