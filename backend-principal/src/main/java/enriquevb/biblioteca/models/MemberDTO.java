@@ -2,6 +2,7 @@ package enriquevb.biblioteca.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import enriquevb.biblioteca.entities.Loan;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -32,6 +33,7 @@ public class MemberDTO {
     @JsonProperty("email")
     @NotNull
     @NotBlank
+    @Email(message = "El email debe tener un formato válido")
     private String email;
 
     @JsonProperty("memberState")

@@ -1,9 +1,14 @@
 package enriquevb.biblioteca.services;
 
+import enriquevb.biblioteca.controllers.NotFoundException;
+import enriquevb.biblioteca.entities.Author;
 import enriquevb.biblioteca.entities.Book;
+import enriquevb.biblioteca.entities.Genre;
 import enriquevb.biblioteca.mappers.BookMapper;
 import enriquevb.biblioteca.models.BookDTO;
+import enriquevb.biblioteca.repositories.AuthorRepository;
 import enriquevb.biblioteca.repositories.BookRepository;
+import enriquevb.biblioteca.repositories.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
@@ -13,9 +18,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -23,6 +31,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public class BookServiceJPA implements BookService {
 
     private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
+    private final GenreRepository genreRepository;
     private final BookMapper bookMapper;
 
     private static final int DEFAULT_PAGE = 0;
@@ -93,7 +103,30 @@ public class BookServiceJPA implements BookService {
 
     @Override
     public BookDTO saveNewBook(BookDTO book) {
-        return bookMapper.bookToBookDto(bookRepository.save(bookMapper.bookDtoToBook(book)));
+        Book entity = bookMapper.bookDtoToBook(book);
+        entity.setAuthors(resolveAuthors(book));
+        entity.setGenres(resolveGenres(book));
+        return bookMapper.bookToBookDto(bookRepository.save(entity));
+    }
+
+    private Set<Author> resolveAuthors(BookDTO book) {
+        if (book.getAuthors() == null) {
+            return new HashSet<>();
+        }
+        return book.getAuthors().stream()
+                .filter(a -> a.getId() != null)
+                .map(a -> authorRepository.findById(a.getId()).orElseThrow(NotFoundException::new))
+                .collect(Collectors.toCollection(HashSet::new));
+    }
+
+    private Set<Genre> resolveGenres(BookDTO book) {
+        if (book.getGenres() == null) {
+            return new HashSet<>();
+        }
+        return book.getGenres().stream()
+                .filter(g -> g.getId() != null)
+                .map(g -> genreRepository.findById(g.getId()).orElseThrow(NotFoundException::new))
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
     @Override
@@ -106,6 +139,8 @@ public class BookServiceJPA implements BookService {
             foundBook.setTitle(book.getTitle());
             foundBook.setAvailableCopies(book.getAvailableCopies());
             foundBook.setPublishedDate(book.getPublishedDate());
+            foundBook.setAuthors(resolveAuthors(book));
+            foundBook.setGenres(resolveGenres(book));
             atomicReference.set(Optional.of(bookMapper
                     .bookToBookDto(bookRepository.save(foundBook))));
         }, () -> {

@@ -1,7 +1,7 @@
 package enriquevb.biblioteca.repositories;
 
-import enriquevb.biblioteca.entities.Author;
 import enriquevb.biblioteca.entities.Member;
+import enriquevb.biblioteca.models.MemberState;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,6 +16,10 @@ public interface MemberRepository extends JpaRepository<Member, UUID> {
     Page<Member> findAllByEmail(String email, Pageable pageable);
 
     Page<Member> findAllByNameIsLikeIgnoreCaseAndEmail(String name, String email, Pageable pageable);
+
+    Page<Member> findAllByMemberState(MemberState memberState, Pageable pageable);
+
+    Page<Member> findAllByNameIsLikeIgnoreCaseAndMemberState(String name, MemberState memberState, Pageable pageable);
 
     Optional<Member> findFirstByEmail(String email);
 }

@@ -1,9 +1,9 @@
 package enriquevb.biblioteca.services;
 
-import enriquevb.biblioteca.entities.Author;
 import enriquevb.biblioteca.entities.Member;
 import enriquevb.biblioteca.mappers.MemberMapper;
 import enriquevb.biblioteca.models.MemberDTO;
+import enriquevb.biblioteca.models.MemberState;
 import enriquevb.biblioteca.repositories.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
@@ -35,17 +35,24 @@ public class MemberServiceJPA implements MemberService {
     }
 
     @Override
-    public Page<MemberDTO> listMembers(String name, String email, Integer pageNumber, Integer pageSize) {
+    public Page<MemberDTO> listMembers(String name, String email, MemberState memberState, Integer pageNumber, Integer pageSize) {
         PageRequest pageRequest = buildPageRequest(pageNumber, pageSize);
+
+        boolean hasName = StringUtils.hasText(name);
+        boolean hasEmail = StringUtils.hasText(email);
 
         Page<Member> memberPage;
 
-        if (StringUtils.hasText(name) && !StringUtils.hasText(email)) {
-            memberPage = listMembersByName(name, pageRequest);
-        } else if (!StringUtils.hasText(name) && StringUtils.hasText(email)) {
-            memberPage = listMembersByEmail(email, pageRequest);
-        } else if (StringUtils.hasText(name) && StringUtils.hasText(email)) {
+        if (hasName && hasEmail) {
             memberPage = listMembersByNameAndEmail(name, email, pageRequest);
+        } else if (hasEmail) {
+            memberPage = listMembersByEmail(email, pageRequest);
+        } else if (hasName && memberState != null) {
+            memberPage = memberRepository.findAllByNameIsLikeIgnoreCaseAndMemberState("%" + name + "%", memberState, pageRequest);
+        } else if (hasName) {
+            memberPage = listMembersByName(name, pageRequest);
+        } else if (memberState != null) {
+            memberPage = memberRepository.findAllByMemberState(memberState, pageRequest);
         } else {
             memberPage = memberRepository.findAll(pageRequest);
         }

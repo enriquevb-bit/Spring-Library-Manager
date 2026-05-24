@@ -2,6 +2,7 @@ package enriquevb.biblioteca.services;
 
 import enriquevb.biblioteca.models.MemberDTO;
 import enriquevb.biblioteca.models.MemberState;
+import org.springframework.lang.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
@@ -56,7 +57,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Page<MemberDTO> listMembers(String name, String email, Integer pageNumber, Integer pageSize) {
+    public Page<MemberDTO> listMembers(String name, String email, @Nullable MemberState memberState, Integer pageNumber, Integer pageSize) {
         return new PageImpl<>(new ArrayList<>(memberMap.values()));
     }
 

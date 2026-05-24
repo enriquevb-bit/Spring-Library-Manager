@@ -3,6 +3,7 @@ package enriquevb.biblioteca.controllers;
 import enriquevb.biblioteca.models.LoanDTO;
 import enriquevb.biblioteca.models.LoanState;
 import enriquevb.biblioteca.models.MemberDTO;
+import enriquevb.biblioteca.models.MemberState;
 import enriquevb.biblioteca.services.LoanService;
 import enriquevb.biblioteca.services.MemberService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -50,7 +52,7 @@ public class MemberController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(MEMBER_PATH_ID)
     public ResponseEntity updateMemberById(@PathVariable("memberId") UUID memberId,
-                                           @RequestBody MemberDTO member) {
+                                           @Validated @RequestBody MemberDTO member) {
 
         if (memberService.updateMemberById(memberId, member).isEmpty()) {
             throw new NotFoundException();
@@ -61,7 +63,7 @@ public class MemberController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(MEMBER_PATH)
-    public ResponseEntity handlePost(@RequestBody MemberDTO member) {
+    public ResponseEntity handlePost(@Validated @RequestBody MemberDTO member) {
         MemberDTO savedMember = memberService.saveNewMember(member);
 
         HttpHeaders headers = new HttpHeaders();
@@ -74,9 +76,10 @@ public class MemberController {
     @GetMapping(MEMBER_PATH)
     public Page<MemberDTO> listMembers(@RequestParam(required = false) String name,
                                           @RequestParam(required = false) String email,
+                                          @RequestParam(required = false) MemberState memberState,
                                           @RequestParam(required = false) @Parameter(description = "Page number, starting at 1") Integer pageNumber,
                                           @RequestParam(required = false) Integer pageSize) {
-        return memberService.listMembers(name, email, pageNumber, pageSize);
+        return memberService.listMembers(name, email, memberState, pageNumber, pageSize);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

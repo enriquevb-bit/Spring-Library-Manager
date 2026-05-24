@@ -198,14 +198,14 @@ class MemberControllerIT {
 
     @Test
     void testGetMemberById() {
-        MemberDTO memberDTO = memberController.listMembers(null, null, 1, 50).getContent().get(0);
+        MemberDTO memberDTO = memberController.listMembers(null, null, null, 1, 50).getContent().get(0);
 
         assertThat(memberController.getMemberById(memberDTO.getId())).isNotNull();
     }
 
     @Test
     void testListMembers() {
-        Page<MemberDTO> members = memberController.listMembers(null,null,1,50);
+        Page<MemberDTO> members = memberController.listMembers(null, null, null, 1, 50);
 
         assertThat(members.getContent().size()).isGreaterThan(0);
 
@@ -217,7 +217,7 @@ class MemberControllerIT {
     void testEmptyList() {
         loanRepository.deleteAll();
         memberRepository.deleteAll();
-        Page<MemberDTO> emptyList = memberController.listMembers(null, null, 1, 50);
+        Page<MemberDTO> emptyList = memberController.listMembers(null, null, null, 1, 50);
 
         assertThat(emptyList.getContent().size()).isEqualTo(0);
     }

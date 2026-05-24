@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import tools.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Data;
 
@@ -28,6 +29,10 @@ public class BookDTO {
     @JsonProperty("isbn")
     @NotNull
     @NotBlank
+    @Pattern(
+            regexp = "^(?:97[89][- ]?(?:\\d[- ]?){9}\\d|(?:\\d[- ]?){9}[\\dXx])$",
+            message = "El ISBN debe ser un ISBN-10 o ISBN-13 válido"
+    )
     private String isbn;
 
     @JsonProperty("title")
