@@ -5,6 +5,7 @@ import enriquevb.biblioteca.models.*;
 import enriquevb.biblioteca.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @Component
+@Profile("!prod")
 @RequiredArgsConstructor
 public class BootstrapData implements CommandLineRunner {
     private final BookRepository bookRepository;
