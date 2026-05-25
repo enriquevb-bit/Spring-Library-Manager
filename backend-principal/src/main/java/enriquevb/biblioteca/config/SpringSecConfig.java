@@ -1,5 +1,6 @@
 package enriquevb.biblioteca.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -19,6 +20,10 @@ import java.util.List;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SpringSecConfig {
+
+    // Configurable por entorno (APP_CORS_ALLOWED_ORIGINS); por defecto, Expo en local.
+    @Value("${app.cors.allowed-origins:http://localhost:8081,http://localhost:19006}")
+    private List<String> allowedOrigins;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -49,7 +54,7 @@ public class SpringSecConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:8081", "http://localhost:19006"));
+        config.setAllowedOrigins(allowedOrigins);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

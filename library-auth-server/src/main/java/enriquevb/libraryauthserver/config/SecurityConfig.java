@@ -5,6 +5,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -66,6 +67,10 @@ import java.util.stream.Collectors;
 public class SecurityConfig {
 
     private static final AuthorizationGrantType PASSWORD_GRANT = new AuthorizationGrantType("password");
+
+    // Configurable por entorno (APP_CORS_ALLOWED_ORIGINS); por defecto, Expo en local.
+    @Value("${app.cors.allowed-origins:http://localhost:8081,http://localhost:19006}")
+    private List<String> allowedOrigins;
 
     @Bean
     @Order(1)
@@ -231,7 +236,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:8081", "http://localhost:19006"));
+        config.setAllowedOrigins(allowedOrigins);
         config.setAllowedMethods(List.of("GET", "POST", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

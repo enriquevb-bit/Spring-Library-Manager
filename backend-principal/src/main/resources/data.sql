@@ -1,7 +1,5 @@
 -- =====================================================
--- data.sql - Datos de prueba para Biblioteca
--- Catálogo de clásicos de la literatura.
--- Cubre los 5 estados de socio y los 5 de préstamo (incluido RESERVED).
+-- data.sql - Datos de prueba (catalogo de clasicos)
 -- =====================================================
 
 -- =====================================================
@@ -245,7 +243,7 @@ INSERT INTO genres_books (book_id, genre_id) VALUES ('b0000049-0000-0000-0000-00
 INSERT INTO genres_books (book_id, genre_id) VALUES ('b0000050-0000-0000-0000-000000000050', 'c0000003-0000-0000-0000-000000000003');
 
 -- =====================================================
--- MIEMBROS (10) - cubren los 5 estados
+-- MIEMBROS (10)
 -- =====================================================
 INSERT INTO member (id, version, name, email, member_state, register_date) VALUES ('d0000001-0000-0000-0000-000000000001', 0, 'Enrique Varela Bouza', 'miembro@gmail.com', 'ACTIVE', '2025-09-01 09:00:00');
 INSERT INTO member (id, version, name, email, member_state, register_date) VALUES ('d0000002-0000-0000-0000-000000000002', 0, 'Carlos Fernández Ruiz', 'carlos.fernandez@email.com', 'ACTIVE', '2025-09-15 10:30:00');
@@ -259,7 +257,7 @@ INSERT INTO member (id, version, name, email, member_state, register_date) VALUE
 INSERT INTO member (id, version, name, email, member_state, register_date) VALUES ('d0000010-0000-0000-0000-000000000010', 0, 'David Moreno Gil', 'david.moreno@email.com', 'INACTIVE', '2025-06-01 09:00:00');
 
 -- =====================================================
--- PRÉSTAMOS (12) - cubren los 5 estados (incluido RESERVED)
+-- PRÉSTAMOS (12)
 -- =====================================================
 INSERT INTO loan (id, version, loan_state, loan_date, expiring_date, due_date, member_id) VALUES ('e0000001-0000-0000-0000-000000000001', 0, 'ACTIVE', '2026-05-12 10:00:00', '2026-05-26 10:00:00', NULL, 'd0000001-0000-0000-0000-000000000001');
 INSERT INTO loan (id, version, loan_state, loan_date, expiring_date, due_date, member_id) VALUES ('e0000002-0000-0000-0000-000000000002', 0, 'RETURNED', '2026-02-01 09:00:00', '2026-02-15 09:00:00', '2026-02-12 11:00:00', 'd0000002-0000-0000-0000-000000000002');
