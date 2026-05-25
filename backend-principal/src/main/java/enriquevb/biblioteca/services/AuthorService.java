@@ -10,7 +10,7 @@ public interface AuthorService {
 
     Optional<AuthorDTO> getAuthorById(UUID uuid);
 
-    Page<AuthorDTO> listAuthors(String fullName, String nationality, Integer pageNumber, Integer pageSize);
+    Page<AuthorDTO> listAuthors(String fullName, String country, Integer pageNumber, Integer pageSize);
 
     AuthorDTO saveNewAuthor(AuthorDTO author);
 

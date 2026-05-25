@@ -27,8 +27,8 @@ public class AuthorDTO {
     @NotBlank
     private String fullName;
 
-    @JsonProperty("nationality")
-    private String nationality;
+    @JsonProperty("country")
+    private String country;
 
     @JsonProperty("birthDate")
     private LocalDate birthDate;

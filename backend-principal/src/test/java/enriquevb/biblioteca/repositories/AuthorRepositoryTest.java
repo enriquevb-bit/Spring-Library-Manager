@@ -23,16 +23,16 @@ class AuthorRepositoryTest {
     AuthorRepository authorRepository;
 
     @Test
-    void getListByFullNameAndNationality() {
-        Page<Author> testList = authorRepository.findAllByFullNameIsLikeIgnoreCaseAndNationality("%a%", "American", null);
+    void getListByFullNameAndCountry() {
+        Page<Author> testList = authorRepository.findAllByFullNameIsLikeIgnoreCaseAndCountry("%a%", "American", null);
 
         assertThat(testList.getContent().size()).isEqualTo(2);
 
     }
 
     @Test
-    void getListByNationality() {
-        Page<Author> testList = authorRepository.findAllByNationality("American", null);
+    void getListByCountry() {
+        Page<Author> testList = authorRepository.findAllByCountry("American", null);
 
         assertThat(testList.getContent().size()).isEqualTo(2);
     }
@@ -49,7 +49,7 @@ class AuthorRepositoryTest {
     void testSaveAuthor() {
         Author savedAuthor = authorRepository.save(Author.builder()
                 .fullName("Gabriel García Márquez")
-                .nationality("Colombian")
+                .country("Colombian")
                 .birthDate(LocalDate.of(1927, 3, 6))
                 .build());
 

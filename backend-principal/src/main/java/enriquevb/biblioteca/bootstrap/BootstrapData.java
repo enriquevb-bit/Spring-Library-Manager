@@ -43,19 +43,19 @@ public class BootstrapData implements CommandLineRunner {
         Author author1 = Author.builder()
                 .fullName("John Ronald Reuel Tolkien")
                 .birthDate(LocalDate.of(1892, 1, 3))
-                .nationality("British")
+                .country("British")
                 .build();
 
         Author author2 = Author.builder()
                 .fullName("George Raymond Richard Martin")
                 .birthDate(LocalDate.of(1948, 9, 20))
-                .nationality("American")
+                .country("American")
                 .build();
 
         Author author3 = Author.builder()
                 .fullName("Suzanne Collins")
                 .birthDate(LocalDate.of(1962, 8, 10))
-                .nationality("American")
+                .country("American")
                 .build();
 
         return List.of(

@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS member;
 CREATE TABLE author (
                         id VARCHAR(36) NOT NULL,
                         name VARCHAR(255) NOT NULL,
-                        nationality VARCHAR(100),
+                        country VARCHAR(100),
                         birth_date DATE,
                         created_date DATETIME(6),
                         update_date DATETIME(6),

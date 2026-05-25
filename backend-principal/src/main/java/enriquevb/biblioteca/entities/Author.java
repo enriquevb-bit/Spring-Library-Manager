@@ -40,7 +40,7 @@ public class Author {
     @Size(max = 50)
     private String fullName;
 
-    private String nationality;
+    private String country;
 
     private LocalDate birthDate;
 

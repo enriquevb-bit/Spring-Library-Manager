@@ -80,7 +80,7 @@ class AuthorControllerIT {
         mockMvc.perform(get(AuthorController.AUTHOR_PATH)
                         .with(BookControllerTest.jwtRequestPostProcessor)
                         .queryParam("fullName", "John Ronald Reuel Tolkien")
-                        .queryParam("nationality", "British")
+                        .queryParam("country", "British")
                         .queryParam("pageNumber", "1")
                         .queryParam("pageSize", "50"))
                 .andExpect(status().isOk())
@@ -88,20 +88,20 @@ class AuthorControllerIT {
     }
 
     @Test
-    void testListAuthorsByNameAndNationality() throws Exception {
+    void testListAuthorsByNameAndCountry() throws Exception {
         mockMvc.perform(get(AuthorController.AUTHOR_PATH)
                         .with(BookControllerTest.jwtRequestPostProcessor)
                         .queryParam("fullName", "John Ronald Reuel Tolkien")
-                        .queryParam("nationality", "British"))
+                        .queryParam("country", "British"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(1)));
     }
 
     @Test
-    void testListAuthorsByNationality() throws Exception {
+    void testListAuthorsByCountry() throws Exception {
         mockMvc.perform(get(AuthorController.AUTHOR_PATH)
                         .with(BookControllerTest.jwtRequestPostProcessor)
-                        .queryParam("nationality", "British"))
+                        .queryParam("country", "British"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(1)));
     }

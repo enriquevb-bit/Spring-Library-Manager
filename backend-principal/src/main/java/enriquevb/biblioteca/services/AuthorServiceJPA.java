@@ -34,17 +34,17 @@ public class AuthorServiceJPA implements AuthorService {
     }
 
     @Override
-    public Page<AuthorDTO> listAuthors(String fullName, String nationality, Integer pageNumber, Integer pageSize) {
+    public Page<AuthorDTO> listAuthors(String fullName, String country, Integer pageNumber, Integer pageSize) {
         PageRequest pageRequest = buildPageRequest(pageNumber, pageSize);
 
         Page<Author> authorPage;
 
-        if (StringUtils.hasText(fullName) && !StringUtils.hasText(nationality)) {
+        if (StringUtils.hasText(fullName) && !StringUtils.hasText(country)) {
             authorPage = listAuthorsByName(fullName, pageRequest);
-        } else if (!StringUtils.hasText(fullName) && StringUtils.hasText(nationality)) {
-            authorPage = listAuthorByNationality(nationality, pageRequest);
-        } else if (StringUtils.hasText(fullName) && StringUtils.hasText(nationality)) {
-            authorPage = listAuthorsByNameAndNationality(fullName, nationality, pageRequest);
+        } else if (!StringUtils.hasText(fullName) && StringUtils.hasText(country)) {
+            authorPage = listAuthorByCountry(country, pageRequest);
+        } else if (StringUtils.hasText(fullName) && StringUtils.hasText(country)) {
+            authorPage = listAuthorsByNameAndCountry(fullName, country, pageRequest);
         } else {
             authorPage = authorRepository.findAll(pageRequest);
         }
@@ -52,12 +52,12 @@ public class AuthorServiceJPA implements AuthorService {
         return authorPage.map(authorMapper::authorToAuthorDto);
     }
 
-    private Page<Author> listAuthorsByNameAndNationality(String fullName, String nationality, PageRequest pageRequest) {
-        return authorRepository.findAllByFullNameIsLikeIgnoreCaseAndNationality("%"+fullName+"%",nationality,pageRequest);
+    private Page<Author> listAuthorsByNameAndCountry(String fullName, String country, PageRequest pageRequest) {
+        return authorRepository.findAllByFullNameIsLikeIgnoreCaseAndCountry("%"+fullName+"%",country,pageRequest);
     }
 
-    private Page<Author> listAuthorByNationality(String nationality, PageRequest pageRequest) {
-        return authorRepository.findAllByNationality(nationality, pageRequest);
+    private Page<Author> listAuthorByCountry(String country, PageRequest pageRequest) {
+        return authorRepository.findAllByCountry(country, pageRequest);
     }
 
     private Page<Author> listAuthorsByName(String fullName, PageRequest pageRequest) {
@@ -102,7 +102,7 @@ public class AuthorServiceJPA implements AuthorService {
 
         authorRepository.findById(authorId).ifPresentOrElse(foundAuthor -> {
             foundAuthor.setFullName(author.getFullName());
-            foundAuthor.setNationality(author.getNationality());
+            foundAuthor.setCountry(author.getCountry());
             foundAuthor.setBirthDate(author.getBirthDate());
             atomicReference.set(Optional.of(authorMapper
                     .authorToAuthorDto(authorRepository.save(foundAuthor))));
@@ -130,8 +130,8 @@ public class AuthorServiceJPA implements AuthorService {
             if (StringUtils.hasText(author.getFullName())) {
                 foundAuthor.setFullName(author.getFullName());
             }
-            if (StringUtils.hasText(author.getNationality())) {
-                foundAuthor.setNationality(author.getNationality());
+            if (StringUtils.hasText(author.getCountry())) {
+                foundAuthor.setCountry(author.getCountry());
             }
             if (author.getBirthDate() != null) {
                 foundAuthor.setBirthDate(author.getBirthDate());

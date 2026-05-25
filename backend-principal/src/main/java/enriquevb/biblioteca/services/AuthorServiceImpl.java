@@ -22,7 +22,7 @@ public class AuthorServiceImpl implements AuthorService {
                 .version(1)
                 .fullName("John Ronald Reuel Tolkien")
                 .birthDate(LocalDate.of(1892, 1, 3))
-                .nationality("British")
+                .country("British")
                 .build();
 
         AuthorDTO author2 = AuthorDTO.builder()
@@ -30,7 +30,7 @@ public class AuthorServiceImpl implements AuthorService {
                 .version(1)
                 .fullName("George Raymond Richard Martin")
                 .birthDate(LocalDate.of(1948, 9, 20))
-                .nationality("American")
+                .country("American")
                 .build();
 
         AuthorDTO author3 = AuthorDTO.builder()
@@ -38,7 +38,7 @@ public class AuthorServiceImpl implements AuthorService {
                 .version(1)
                 .fullName("Suzanne Collins")
                 .birthDate(LocalDate.of(1962, 8, 10))
-                .nationality("American")
+                .country("American")
                 .build();
 
         authorMap.put(author1.getId(), author1);
@@ -52,7 +52,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public Page<AuthorDTO> listAuthors(String fullName, String nationality, Integer pageNumber, Integer pageSize) {
+    public Page<AuthorDTO> listAuthors(String fullName, String country, Integer pageNumber, Integer pageSize) {
         return new PageImpl<>(new ArrayList<>(authorMap.values()));
     }
 
@@ -62,7 +62,7 @@ public class AuthorServiceImpl implements AuthorService {
                 .id(UUID.randomUUID())
                 .version(1)
                 .fullName(author.getFullName())
-                .nationality(author.getNationality())
+                .country(author.getCountry())
                 .birthDate(author.getBirthDate())
                 .build();
 
@@ -76,7 +76,7 @@ public class AuthorServiceImpl implements AuthorService {
 
         if (existing != null) {
             existing.setFullName(author.getFullName());
-            existing.setNationality(author.getNationality());
+            existing.setCountry(author.getCountry());
             existing.setBirthDate(author.getBirthDate());
             return Optional.of(existing);
         }
@@ -101,8 +101,8 @@ public class AuthorServiceImpl implements AuthorService {
             if (StringUtils.hasText(author.getFullName())) {
                 existing.setFullName(author.getFullName());
             }
-            if (StringUtils.hasText(author.getNationality())) {
-                existing.setNationality(author.getNationality());
+            if (StringUtils.hasText(author.getCountry())) {
+                existing.setCountry(author.getCountry());
             }
             if (author.getBirthDate() != null) {
                 existing.setBirthDate(author.getBirthDate());

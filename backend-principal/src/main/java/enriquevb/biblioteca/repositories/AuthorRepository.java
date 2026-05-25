@@ -11,7 +11,7 @@ public interface AuthorRepository extends JpaRepository<Author, UUID> {
 
     Page<Author> findAllByFullNameIsLikeIgnoreCase(String fullName, Pageable pageable);
 
-    Page<Author> findAllByNationality(String nationality, Pageable pageable);
+    Page<Author> findAllByCountry(String country, Pageable pageable);
 
-    Page<Author> findAllByFullNameIsLikeIgnoreCaseAndNationality(String fullName, String nationality, Pageable pageable);
+    Page<Author> findAllByFullNameIsLikeIgnoreCaseAndCountry(String fullName, String country, Pageable pageable);
 }

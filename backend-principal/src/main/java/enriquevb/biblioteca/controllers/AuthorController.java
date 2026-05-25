@@ -69,10 +69,10 @@ public class AuthorController {
     @PreAuthorize("hasAnyRole('ADMIN', 'MEMBER')")
     @GetMapping(AUTHOR_PATH)
     public Page<AuthorDTO> listAuthors(@RequestParam(required = false) String fullName,
-                                       @RequestParam(required = false) String nationality,
+                                       @RequestParam(required = false) String country,
                                        @RequestParam(required = false) @Parameter(description = "Page number, starting at 1") Integer pageNumber,
                                        @RequestParam(required = false) Integer pageSize) {
-        return authorService.listAuthors(fullName, nationality, pageNumber, pageSize);
+        return authorService.listAuthors(fullName, country, pageNumber, pageSize);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MEMBER')")

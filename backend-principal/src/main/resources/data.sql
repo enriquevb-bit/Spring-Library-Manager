@@ -5,41 +5,41 @@
 -- =====================================================
 -- AUTORES (35)
 -- =====================================================
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000001-0000-0000-0000-000000000001', 0, 'Miguel de Cervantes', 'Española', '1547-09-29');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000002-0000-0000-0000-000000000002', 0, 'William Shakespeare', 'Británica', '1564-04-23');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000003-0000-0000-0000-000000000003', 0, 'Homero', 'Griega', NULL);
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000004-0000-0000-0000-000000000004', 0, 'Dante Alighieri', 'Italiana', '1265-06-01');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000005-0000-0000-0000-000000000005', 0, 'Jane Austen', 'Británica', '1775-12-16');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000006-0000-0000-0000-000000000006', 0, 'Emily Brontë', 'Británica', '1818-07-30');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000007-0000-0000-0000-000000000007', 0, 'Charlotte Brontë', 'Británica', '1816-04-21');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000008-0000-0000-0000-000000000008', 0, 'Charles Dickens', 'Británica', '1812-02-07');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000009-0000-0000-0000-000000000009', 0, 'Victor Hugo', 'Francesa', '1802-02-26');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000010-0000-0000-0000-000000000010', 0, 'Alexandre Dumas', 'Francesa', '1802-07-24');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000011-0000-0000-0000-000000000011', 0, 'Gustave Flaubert', 'Francesa', '1821-12-12');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000012-0000-0000-0000-000000000012', 0, 'Fiódor Dostoievski', 'Rusa', '1821-11-11');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000013-0000-0000-0000-000000000013', 0, 'León Tolstói', 'Rusa', '1828-09-09');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000014-0000-0000-0000-000000000014', 0, 'Herman Melville', 'Estadounidense', '1819-08-01');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000015-0000-0000-0000-000000000015', 0, 'Mark Twain', 'Estadounidense', '1835-11-30');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000016-0000-0000-0000-000000000016', 0, 'Robert Louis Stevenson', 'Británica', '1850-11-13');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000017-0000-0000-0000-000000000017', 0, 'Oscar Wilde', 'Irlandesa', '1854-10-16');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000018-0000-0000-0000-000000000018', 0, 'Mary Shelley', 'Británica', '1797-08-30');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000019-0000-0000-0000-000000000019', 0, 'Bram Stoker', 'Irlandesa', '1847-11-08');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000020-0000-0000-0000-000000000020', 0, 'Julio Verne', 'Francesa', '1828-02-08');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000021-0000-0000-0000-000000000021', 0, 'F. Scott Fitzgerald', 'Estadounidense', '1896-09-24');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000022-0000-0000-0000-000000000022', 0, 'Harper Lee', 'Estadounidense', '1926-04-28');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000023-0000-0000-0000-000000000023', 0, 'George Orwell', 'Británica', '1903-06-25');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000024-0000-0000-0000-000000000024', 0, 'Aldous Huxley', 'Británica', '1894-07-26');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000025-0000-0000-0000-000000000025', 0, 'Ray Bradbury', 'Estadounidense', '1920-08-22');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000026-0000-0000-0000-000000000026', 0, 'Franz Kafka', 'Checa', '1883-07-03');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000027-0000-0000-0000-000000000027', 0, 'Gabriel García Márquez', 'Colombiana', '1927-03-06');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000028-0000-0000-0000-000000000028', 0, 'Jorge Luis Borges', 'Argentina', '1899-08-24');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000029-0000-0000-0000-000000000029', 0, 'Julio Cortázar', 'Argentina', '1914-08-26');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000030-0000-0000-0000-000000000030', 0, 'Antoine de Saint-Exupéry', 'Francesa', '1900-06-29');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000031-0000-0000-0000-000000000031', 0, 'Juan Rulfo', 'Mexicana', '1917-05-16');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000032-0000-0000-0000-000000000032', 0, 'Carlos Ruiz Zafón', 'Española', '1964-09-25');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000033-0000-0000-0000-000000000033', 0, 'Umberto Eco', 'Italiana', '1932-01-05');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000034-0000-0000-0000-000000000034', 0, 'Leopoldo Alas Clarín', 'Española', '1852-04-25');
-INSERT INTO author (id, version, full_name, nationality, birth_date) VALUES ('a0000035-0000-0000-0000-000000000035', 0, 'Benito Pérez Galdós', 'Española', '1843-05-10');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000001-0000-0000-0000-000000000001', 0, 'Miguel de Cervantes', 'España','1547-09-29');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000002-0000-0000-0000-000000000002', 0, 'William Shakespeare', 'Reino Unido','1564-04-23');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000003-0000-0000-0000-000000000003', 0, 'Homero', 'Grecia',NULL);
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000004-0000-0000-0000-000000000004', 0, 'Dante Alighieri', 'Italia','1265-06-01');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000005-0000-0000-0000-000000000005', 0, 'Jane Austen', 'Reino Unido','1775-12-16');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000006-0000-0000-0000-000000000006', 0, 'Emily Brontë', 'Reino Unido','1818-07-30');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000007-0000-0000-0000-000000000007', 0, 'Charlotte Brontë', 'Reino Unido','1816-04-21');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000008-0000-0000-0000-000000000008', 0, 'Charles Dickens', 'Reino Unido','1812-02-07');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000009-0000-0000-0000-000000000009', 0, 'Victor Hugo', 'Francia','1802-02-26');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000010-0000-0000-0000-000000000010', 0, 'Alexandre Dumas', 'Francia','1802-07-24');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000011-0000-0000-0000-000000000011', 0, 'Gustave Flaubert', 'Francia','1821-12-12');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000012-0000-0000-0000-000000000012', 0, 'Fiódor Dostoievski', 'Rusia','1821-11-11');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000013-0000-0000-0000-000000000013', 0, 'León Tolstói', 'Rusia','1828-09-09');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000014-0000-0000-0000-000000000014', 0, 'Herman Melville', 'Estados Unidos','1819-08-01');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000015-0000-0000-0000-000000000015', 0, 'Mark Twain', 'Estados Unidos','1835-11-30');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000016-0000-0000-0000-000000000016', 0, 'Robert Louis Stevenson', 'Reino Unido','1850-11-13');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000017-0000-0000-0000-000000000017', 0, 'Oscar Wilde', 'Irlanda','1854-10-16');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000018-0000-0000-0000-000000000018', 0, 'Mary Shelley', 'Reino Unido','1797-08-30');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000019-0000-0000-0000-000000000019', 0, 'Bram Stoker', 'Irlanda','1847-11-08');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000020-0000-0000-0000-000000000020', 0, 'Julio Verne', 'Francia','1828-02-08');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000021-0000-0000-0000-000000000021', 0, 'F. Scott Fitzgerald', 'Estados Unidos','1896-09-24');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000022-0000-0000-0000-000000000022', 0, 'Harper Lee', 'Estados Unidos','1926-04-28');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000023-0000-0000-0000-000000000023', 0, 'George Orwell', 'Reino Unido','1903-06-25');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000024-0000-0000-0000-000000000024', 0, 'Aldous Huxley', 'Reino Unido','1894-07-26');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000025-0000-0000-0000-000000000025', 0, 'Ray Bradbury', 'Estados Unidos','1920-08-22');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000026-0000-0000-0000-000000000026', 0, 'Franz Kafka', 'República Checa','1883-07-03');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000027-0000-0000-0000-000000000027', 0, 'Gabriel García Márquez', 'Colombia','1927-03-06');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000028-0000-0000-0000-000000000028', 0, 'Jorge Luis Borges', 'Argentina', '1899-08-24');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000029-0000-0000-0000-000000000029', 0, 'Julio Cortázar', 'Argentina', '1914-08-26');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000030-0000-0000-0000-000000000030', 0, 'Antoine de Saint-Exupéry', 'Francia','1900-06-29');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000031-0000-0000-0000-000000000031', 0, 'Juan Rulfo', 'México','1917-05-16');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000032-0000-0000-0000-000000000032', 0, 'Carlos Ruiz Zafón', 'España','1964-09-25');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000033-0000-0000-0000-000000000033', 0, 'Umberto Eco', 'Italia','1932-01-05');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000034-0000-0000-0000-000000000034', 0, 'Leopoldo Alas Clarín', 'España','1852-04-25');
+INSERT INTO author (id, version, full_name, country, birth_date) VALUES ('a0000035-0000-0000-0000-000000000035', 0, 'Benito Pérez Galdós', 'España','1843-05-10');
 
 -- =====================================================
 -- GÉNEROS (10)
