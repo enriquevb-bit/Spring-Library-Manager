@@ -52,7 +52,7 @@ public class LoanServiceJPA implements LoanService {
 
         LoanDTO loanDTO = loanMapper.loanToLoanDto(loanRepository.findById(loanId).orElseThrow(NotFoundException::new));
 
-        if (loanDTO.getLoanState() != LoanState.ACTIVE) {
+        if (loanDTO.getLoanState() != LoanState.ACTIVE && loanDTO.getLoanState() != LoanState.OVERDUE) {
             throw new LoanAlreadyReturnedException();
         }
 
