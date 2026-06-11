@@ -8,6 +8,7 @@ import enriquevb.biblioteca.controllers.NotEnoughCopiesException;
 import enriquevb.biblioteca.controllers.NotFoundException;
 import enriquevb.biblioteca.entities.Book;
 import enriquevb.biblioteca.entities.Loan;
+import enriquevb.biblioteca.entities.LoanLine;
 import enriquevb.biblioteca.mappers.BookMapper;
 import enriquevb.biblioteca.mappers.LoanLineMapper;
 import enriquevb.biblioteca.mappers.LoanMapper;
@@ -230,13 +231,30 @@ public class LoanServiceJPA implements LoanService {
         return atomicReference.get();
     }
 
+    @Transactional
     @Override
     public Boolean deleteLoanById(UUID loanId) {
-        if (loanRepository.existsById(loanId)) {
-            loanRepository.deleteById(loanId);
-            return true;
+        Optional<Loan> foundLoan = loanRepository.findById(loanId);
+
+        if (foundLoan.isEmpty()) {
+            return false;
         }
-        return false;
+
+        Loan loan = foundLoan.get();
+
+        // ACTIVE, OVERDUE y RESERVED retienen copias: al eliminar el préstamo se devuelven al stock.
+        if (loan.getLoanState() == LoanState.ACTIVE
+                || loan.getLoanState() == LoanState.OVERDUE
+                || loan.getLoanState() == LoanState.RESERVED) {
+            for (LoanLine line : loan.getLoanLines()) {
+                Book book = line.getBook();
+                book.setAvailableCopies(book.getAvailableCopies() + line.getOrderedQuantity());
+                bookRepository.save(book);
+            }
+        }
+
+        loanRepository.delete(loan);
+        return true;
     }
 
     @Override

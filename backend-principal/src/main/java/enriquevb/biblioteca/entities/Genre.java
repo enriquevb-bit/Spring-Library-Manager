@@ -32,6 +32,7 @@ public class Genre {
 
     @NotNull
     @NotBlank
+    @Column(unique = true)
     private String name;
 
     private String description;

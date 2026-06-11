@@ -8,9 +8,9 @@ import org.mapstruct.Mapping;
 @Mapper
 public interface MemberMapper {
 
+    @Mapping(target = "loans", ignore = true)
     Member memberDtoToMember(MemberDTO memberDTO);
 
-    @Mapping(target = "loans", ignore = true)
     MemberDTO memberToMemberDto(Member member);
 
 }

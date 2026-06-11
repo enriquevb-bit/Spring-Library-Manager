@@ -40,6 +40,7 @@ public class Member {
 
     @NotNull
     @NotBlank
+    @Column(unique = true)
     private String email;
 
     @NotNull
